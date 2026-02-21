@@ -1,0 +1,17 @@
+{
+  "name": "yttv-seek-extension",
+  "version": "1.0.0",
+  "description": "Configurable seek controls for YouTube TV",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "pack": "node scripts/pack.js"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0",
+    "jsdom": "^26.0.0"
+  },
+  "author": "John Gorman",
+  "license": "MIT"
+}
