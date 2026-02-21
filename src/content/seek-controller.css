@@ -1,0 +1,40 @@
+/* YTTV Seek — on-screen display overlay */
+
+.yttv-seek-osd {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4em;
+  background: rgba(0, 0, 0, 0.28);
+  color: #fff;
+  pointer-events: none;
+  z-index: 2147483647; /* max z-index */
+
+  opacity: 0;
+  transition: opacity 80ms ease-in;
+}
+
+.yttv-seek-osd--visible {
+  opacity: 1;
+}
+
+.yttv-seek-osd--back    { left: 0; border-radius: 0 50% 50% 0; }
+.yttv-seek-osd--forward { right: 0; border-radius: 50% 0 0 50%; }
+
+.yttv-seek-osd__icon {
+  font-size: 3.5vw;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.yttv-seek-osd__label {
+  font-size: 1.6vw;
+  font-weight: 600;
+  font-family: "YouTube Sans", "Roboto", sans-serif;
+  letter-spacing: 0.03em;
+}

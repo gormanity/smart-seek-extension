@@ -28,6 +28,7 @@
     {
       "matches": ["*://tv.youtube.com/*"],
       "js": ["src/content/seek-controller.js"],
+      "css": ["src/content/seek-controller.css"],
       "run_at": "document_idle"
     }
   ],
