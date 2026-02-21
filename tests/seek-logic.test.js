@@ -61,12 +61,13 @@ describe('matchesKey', () => {
   });
 
   it('matches a bare key with no modifiers', () => {
-    expect(matchesKey(fakeEvent('j'), 'J')).toBe(true);
+    // Without shift, the browser reports lowercase 'j'
+    expect(matchesKey(fakeEvent('j'), 'j')).toBe(true);
   });
 
   it('does not match bare key when shift is also pressed', () => {
-    // When shift is pressed and key is a letter, event.key is uppercase
-    expect(matchesKey(fakeEvent('J', { shiftKey: true }), 'J')).toBe(false);
+    // With shift, the browser reports uppercase 'J'; bare 'j' requires no shift
+    expect(matchesKey(fakeEvent('J', { shiftKey: true }), 'j')).toBe(false);
   });
 });
 
