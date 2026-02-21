@@ -49,8 +49,6 @@
     video.currentTime = Math.max(0, video.currentTime + seconds);
   }
 
-  console.log('[YTTV Seek] content script loaded');
-
   // ── Storage shim ──────────────────────────────────────────────────────────
   var storageSync = (typeof browser !== 'undefined' ? browser : chrome).storage.sync;
 
@@ -59,7 +57,6 @@
 
   storageSync.get(DEFAULT_SETTINGS, function (stored) {
     Object.assign(settings, stored);
-    console.log('[YTTV Seek] settings loaded:', settings);
   });
 
   // ── Key handler ───────────────────────────────────────────────────────────
@@ -74,42 +71,18 @@
     var isForward = matchesKey(event, settings.forwardKey);
     if (!isBack && !isForward) return;
 
-    console.log('[YTTV Seek] key matched:', event.key, '| shift:', event.shiftKey);
-
+    // Pick the best candidate: playing > ready-with-duration > first
     var videos = Array.from(document.querySelectorAll('video'));
-    console.log('[YTTV Seek] video elements found:', videos.length,
-      videos.map(function(v, i) {
-        return i + ': src=' + (v.src || v.currentSrc || 'none').slice(0,40)
-          + ' readyState=' + v.readyState
-          + ' paused=' + v.paused
-          + ' currentTime=' + v.currentTime
-          + ' duration=' + v.duration;
-      })
-    );
-
-    // Pick the best candidate: playing > has-duration > first
     var video = videos.find(function(v) { return !v.paused && v.readyState >= 2; })
              || videos.find(function(v) { return v.readyState >= 2 && v.duration > 0; })
              || videos[0];
 
-    if (!video) {
-      console.warn('[YTTV Seek] no <video> element found');
-      return;
-    }
+    if (!video) return;
 
     event.preventDefault();
     event.stopImmediatePropagation();
 
-    var delta = isForward ? settings.seekAmount : -settings.seekAmount;
-    var before = video.currentTime;
-    applySeek(video, delta);
-    var after = video.currentTime;
-    console.log('[YTTV Seek] sought', delta, 's:', before, '->', after);
-
-    // Check if YouTube TV reset it
-    setTimeout(function() {
-      console.log('[YTTV Seek] currentTime 200ms later:', video.currentTime);
-    }, 200);
+    applySeek(video, isForward ? settings.seekAmount : -settings.seekAmount);
   }, /* capture */ true);
 
   // ── Settings live-reload ──────────────────────────────────────────────────
