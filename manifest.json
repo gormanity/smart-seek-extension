@@ -32,13 +32,6 @@
     }
   ],
 
-  "web_accessible_resources": [
-    {
-      "resources": ["src/content/seek-logic.js"],
-      "matches": ["*://tv.youtube.com/*"]
-    }
-  ],
-
   "options_ui": {
     "page": "src/options/options.html",
     "open_in_tab": true

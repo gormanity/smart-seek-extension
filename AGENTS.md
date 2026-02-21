@@ -68,6 +68,11 @@ This repo uses `jj` with a colocated git backend.
 - Keep content scripts self-contained and minimal.
 - Settings keys: `seekAmount` (number, seconds), `backKey` (string, e.g. `"Shift+J"`), `forwardKey` (string, e.g. `"Shift+L"`).
 
+## Pitfalls
+
+- **Do not use dynamic `import()` in content scripts.** If the import fails (e.g. CORS, CSP, or extension URL edge cases), the async IIFE rejects silently and no event listener is ever attached — seeking appears completely broken with no visible error. Keep `seek-controller.js` as a self-contained IIFE with logic inlined. `seek-logic.js` is the ES-module source of truth for tests only.
+- **Do not use ES module `export` in files loaded as content scripts.** Classic content scripts don't support top-level `export`; it causes a SyntaxError.
+
 ## Key Implementation Notes
 
 - **Finding the video element:** `document.querySelector('video')` on `tv.youtube.com`.
