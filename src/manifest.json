@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "YTTV Seek",
+  "version": "1.0.0",
+  "description": "Adds configurable seek controls to YouTube TV (default: 5-second seek via Shift+J / Shift+L).",
+
+  "icons": {
+    "16":  "icons/icon-16.png",
+    "48":  "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+
+  "host_permissions": [
+    "*://tv.youtube.com/*"
+  ],
+
+  "background": {
+    "service_worker": "src/background/service-worker.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://tv.youtube.com/*"],
+      "js": ["src/content/seek-controller.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["src/content/seek-logic.js"],
+      "matches": ["*://tv.youtube.com/*"]
+    }
+  ],
+
+  "options_ui": {
+    "page": "src/options/options.html",
+    "open_in_tab": true
+  },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "yttv-seek@gormanity",
+      "strict_min_version": "112.0"
+    }
+  }
+}
