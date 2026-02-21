@@ -124,8 +124,8 @@ function initSaveButton() {
     const backKey    = document.getElementById('back-key').value.trim();
     const forwardKey = document.getElementById('forward-key').value.trim();
 
-    if (!backKey || !forwardKey) {
-      errEl.textContent = 'Key bindings cannot be empty.';
+    if (!isValidKeyString(backKey) || !isValidKeyString(forwardKey)) {
+      errEl.textContent = 'Key bindings cannot be empty or modifier-only.';
       return;
     }
 
@@ -134,7 +134,16 @@ function initSaveButton() {
       return;
     }
 
-    await getStorage().set({ seekAmount, backKey, forwardKey });
+    const newSettings = { seekAmount, backKey, forwardKey };
+    await getStorage().set(newSettings);
+
+    // Notify any open YouTube TV tabs so settings apply without a page reload.
+    const tabs = await chrome.tabs.query({ url: '*://tv.youtube.com/*' });
+    for (const tab of tabs) {
+      chrome.tabs.sendMessage(tab.id, { type: 'settings-updated', settings: newSettings })
+        .catch(() => { /* tab may not have content script yet */ });
+    }
+
     status.textContent = 'Settings saved.';
     setTimeout(() => { status.textContent = ''; }, 2000);
   });
