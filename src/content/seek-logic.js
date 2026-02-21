@@ -71,6 +71,22 @@ export function matchesKey(event, keyString) {
   );
 }
 
+const MODIFIER_KEYS = new Set(['shift', 'ctrl', 'control', 'alt', 'meta', 'cmd', 'command']);
+
+/**
+ * Returns true if `str` is a valid key binding string — i.e. it ends with a
+ * non-modifier key (optionally preceded by one or more modifiers joined by +).
+ *
+ * @param {string} str
+ * @returns {boolean}
+ */
+export function isValidKeyString(str) {
+  if (!str || typeof str !== 'string') return false;
+  const parts = str.split('+');
+  const key   = parts[parts.length - 1];
+  return key.length > 0 && !MODIFIER_KEYS.has(key.toLowerCase());
+}
+
 /**
  * Format a seek amount as a display label, e.g. 5 → "5s", 2.5 → "2.5s".
  * Always returns a positive label; direction is conveyed by the OSD layout.

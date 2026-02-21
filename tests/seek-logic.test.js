@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseKey, matchesKey, applySeek, formatSeekLabel, DEFAULT_SETTINGS } from '../src/content/seek-logic.js';
+import { parseKey, matchesKey, applySeek, formatSeekLabel, isValidKeyString, DEFAULT_SETTINGS } from '../src/content/seek-logic.js';
 
 describe('parseKey', () => {
   it('parses a bare key with no modifiers', () => {
@@ -98,6 +98,49 @@ describe('applySeek', () => {
     video.currentTime = 100;
     applySeek(video, 30);
     expect(video.currentTime).toBe(130);
+  });
+});
+
+describe('isValidKeyString', () => {
+  it('accepts a plain letter key', () => {
+    expect(isValidKeyString('j')).toBe(true);
+  });
+
+  it('accepts a shifted letter', () => {
+    expect(isValidKeyString('Shift+J')).toBe(true);
+  });
+
+  it('accepts a named key like ArrowLeft', () => {
+    expect(isValidKeyString('ArrowLeft')).toBe(true);
+  });
+
+  it('accepts a function key', () => {
+    expect(isValidKeyString('F5')).toBe(true);
+  });
+
+  it('accepts multiple modifiers with a key', () => {
+    expect(isValidKeyString('Ctrl+Shift+K')).toBe(true);
+  });
+
+  it('rejects a bare Shift modifier', () => {
+    expect(isValidKeyString('Shift')).toBe(false);
+  });
+
+  it('rejects a bare Control modifier', () => {
+    expect(isValidKeyString('Control')).toBe(false);
+  });
+
+  it('rejects modifiers only (Ctrl+Shift)', () => {
+    expect(isValidKeyString('Ctrl+Shift')).toBe(false);
+  });
+
+  it('rejects an empty string', () => {
+    expect(isValidKeyString('')).toBe(false);
+  });
+
+  it('rejects null and undefined', () => {
+    expect(isValidKeyString(null)).toBe(false);
+    expect(isValidKeyString(undefined)).toBe(false);
   });
 });
 
