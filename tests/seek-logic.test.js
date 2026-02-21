@@ -166,11 +166,11 @@ describe('DEFAULT_SETTINGS', () => {
     expect(DEFAULT_SETTINGS.seekAmount).toBe(5);
   });
 
-  it('has backKey of Shift+J', () => {
-    expect(DEFAULT_SETTINGS.backKey).toBe('Shift+J');
+  it('has backKey of j', () => {
+    expect(DEFAULT_SETTINGS.backKey).toBe('j');
   });
 
-  it('has forwardKey of Shift+L', () => {
-    expect(DEFAULT_SETTINGS.forwardKey).toBe('Shift+L');
+  it('has forwardKey of l', () => {
+    expect(DEFAULT_SETTINGS.forwardKey).toBe('l');
   });
 });
