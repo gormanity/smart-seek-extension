@@ -7,7 +7,7 @@
  * initOptionsPage() wires up the DOM and is called from options.html.
  */
 
-import { DEFAULT_SETTINGS, parseKey } from '../content/seek-logic.js';
+import { DEFAULT_SETTINGS, parseKey, isValidKeyString } from '../content/seek-logic.js';
 
 // ---------------------------------------------------------------------------
 // Pure helpers (exported for tests)
@@ -69,15 +69,35 @@ async function loadSettings() {
 
 /**
  * Wire up key-capture inputs so pressing a key fills the field.
+ * - Adds a `.is-listening` class while the input has focus.
+ * - Escape restores the value that was present when focus was gained.
  */
 function initKeyInputs() {
   for (const id of ['back-key', 'forward-key']) {
     const input = document.getElementById(id);
+    let savedValue = '';
+
+    input.addEventListener('focus', () => {
+      savedValue = input.value;
+      input.classList.add('is-listening');
+    });
+
+    input.addEventListener('blur', () => {
+      input.classList.remove('is-listening');
+    });
+
     input.addEventListener('keydown', (event) => {
       event.preventDefault();
-      // Ignore bare modifier keypresses
+      // Bare modifier keypress — keep waiting
       if (['Shift', 'Control', 'Alt', 'Meta'].includes(event.key)) return;
+      // Escape — cancel and restore
+      if (event.key === 'Escape') {
+        input.value = savedValue;
+        input.blur();
+        return;
+      }
       input.value = formatKeyString(event);
+      input.blur();
     });
   }
 }

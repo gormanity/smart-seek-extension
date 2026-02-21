@@ -40,6 +40,16 @@ input:focus {
   border-color: transparent;
 }
 
+input.is-listening {
+  outline: 2px solid #e06c00;
+  border-color: transparent;
+  color: #888;
+}
+
+input.is-listening::placeholder {
+  color: #e06c00;
+}
+
 .actions {
   display: flex;
   align-items: center;
