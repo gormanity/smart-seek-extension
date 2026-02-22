@@ -7,7 +7,7 @@
  * initOptionsPage() wires up the DOM and is called from init.ts.
  */
 
-import { DEFAULT_SETTINGS, parseKey, isValidKeyString } from '../content/seek-logic.js';
+import { DEFAULT_SETTINGS, isValidKeyString } from '../content/seek-logic.js';
 
 // ---------------------------------------------------------------------------
 // Pure helpers (exported for tests)
@@ -184,6 +184,3 @@ export async function initOptionsPage(): Promise<void> {
   initResetButton();
 }
 
-// Export parseKey so tests/options.test.ts can validate key parsing indirectly;
-// the import is used internally above.
-export { parseKey };
