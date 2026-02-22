@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YTTV Seek</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="page">
+
+    <header class="header">
+      <img src="../../icons/icon-48.png" alt="" width="20" height="20" />
+      <span class="header-title">YTTV Seek</span>
+    </header>
+
+    <div class="card">
+
+      <div class="section">
+        <div class="section-label">Seek amount</div>
+        <div class="amount-row">
+          <button id="decrease" class="amount-btn" aria-label="Decrease seek amount">−</button>
+          <div class="amount-display">
+            <span id="amount-value"></span>
+            <span class="amount-unit">seconds</span>
+          </div>
+          <button id="increase" class="amount-btn" aria-label="Increase seek amount">+</button>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="section">
+        <div class="section-label">Key bindings</div>
+        <div class="binding-row">
+          <span class="binding-label">Seek backward</span>
+          <span id="back-key" class="binding-value"></span>
+        </div>
+        <div class="binding-row">
+          <span class="binding-label">Seek forward</span>
+          <span id="forward-key" class="binding-value"></span>
+        </div>
+      </div>
+
+    </div>
+
+    <button id="open-settings" class="settings-link">Open Settings</button>
+
+  </div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
