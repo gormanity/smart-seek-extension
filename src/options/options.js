@@ -29,7 +29,7 @@ export function validateSeekAmount(value) {
   if (n > 300) {
     throw new Error(`Seek amount ${n} exceeds maximum of 300 seconds.`);
   }
-  return n;
+  return Math.round(n * 10) / 10;
 }
 
 /**
@@ -70,6 +70,19 @@ async function loadSettings() {
   document.getElementById('seek-amount').value = settings.seekAmount;
   document.getElementById('back-key').value    = settings.backKey;
   document.getElementById('forward-key').value = settings.forwardKey;
+}
+
+/**
+ * Round the seek amount field to one decimal place on blur.
+ */
+function initSeekAmountInput() {
+  const input = document.getElementById('seek-amount');
+  input.addEventListener('blur', () => {
+    const n = parseFloat(input.value);
+    if (Number.isFinite(n) && n > 0) {
+      input.value = Math.round(n * 10) / 10;
+    }
+  });
 }
 
 /**
@@ -168,6 +181,7 @@ function initResetButton() {
  */
 export async function initOptionsPage() {
   await loadSettings();
+  initSeekAmountInput();
   initKeyInputs();
   initSaveButton();
   initResetButton();

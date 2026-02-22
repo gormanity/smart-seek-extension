@@ -12,6 +12,12 @@ describe('validateSeekAmount', () => {
     expect(validateSeekAmount(2.5)).toBe(2.5);
   });
 
+  it('rounds to one decimal place', () => {
+    expect(validateSeekAmount(5.3247)).toBe(5.3);
+    expect(validateSeekAmount(1.25)).toBe(1.3);
+    expect(validateSeekAmount(10.99)).toBe(11);
+  });
+
   it('coerces numeric strings', () => {
     expect(validateSeekAmount('10')).toBe(10);
   });
