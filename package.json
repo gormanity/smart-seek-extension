@@ -6,9 +6,11 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
+    "gen-icons": "node scripts/gen-icons.js",
     "pack": "node scripts/pack.js"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.0",
     "vitest": "^3.0.0",
     "jsdom": "^26.0.0"
   },
