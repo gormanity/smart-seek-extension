@@ -170,6 +170,24 @@ describe('formatSeekLabel', () => {
 
   it('always produces a positive label regardless of sign', () => {
     expect(formatSeekLabel(-5)).toBe('5');
+    expect(formatSeekLabel(-2.5)).toBe('2.5');
+  });
+
+  it('formats zero as "0"', () => {
+    expect(formatSeekLabel(0)).toBe('0');
+  });
+
+  it('preserves sub-second precision', () => {
+    expect(formatSeekLabel(0.1)).toBe('0.1');
+  });
+
+  // Guard against future minute/hour formatting — label is always raw seconds
+  it('does not convert 60 seconds to minutes', () => {
+    expect(formatSeekLabel(60)).toBe('60');
+  });
+
+  it('does not convert 3600 seconds to hours', () => {
+    expect(formatSeekLabel(3600)).toBe('3600');
   });
 });
 
