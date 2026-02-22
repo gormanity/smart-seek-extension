@@ -60,8 +60,8 @@ function getStorage(): chrome.storage.SyncStorageArea {
 async function loadSettings(): Promise<void> {
   let settings: typeof DEFAULT_SETTINGS;
   try {
-    settings = await getStorage().get(DEFAULT_SETTINGS) as typeof DEFAULT_SETTINGS;
-  } catch (_) {
+    settings = await getStorage().get(DEFAULT_SETTINGS);
+  } catch {
     settings = { ...DEFAULT_SETTINGS };
   }
   (document.getElementById('seek-amount') as HTMLInputElement).value = String(settings.seekAmount);

@@ -16,4 +16,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: make build
-      - run: make check
+      - run: make typecheck
+      - run: make lint
+      - run: make test

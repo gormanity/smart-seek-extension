@@ -21,7 +21,7 @@ function round1(n: number): number {
 // ── Load settings ─────────────────────────────────────────────────────────────
 
 type Settings = typeof DEFAULT_SETTINGS;
-const settings = await storage.get(DEFAULT_SETTINGS) as Settings;
+const settings: Settings = await storage.get(DEFAULT_SETTINGS);
 
 const amountEl   = document.getElementById('amount-value') as HTMLSpanElement;
 const decreaseEl = document.getElementById('decrease') as HTMLButtonElement;
@@ -53,5 +53,5 @@ increaseEl.addEventListener('click', () => setAmount(settings.seekAmount + STEP)
 // ── Open full settings ────────────────────────────────────────────────────────
 
 document.getElementById('open-settings')!.addEventListener('click', () => {
-  chrome.runtime.openOptionsPage();
+  void chrome.runtime.openOptionsPage();
 });

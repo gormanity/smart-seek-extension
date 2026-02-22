@@ -16,12 +16,12 @@ const PREVIOUS_DEFAULTS = {
 };
 
 chrome.runtime.onInstalled.addListener(async ({ reason }) => {
-  if (reason === 'install') {
+  if (reason === chrome.runtime.OnInstalledReason.INSTALL) {
     await chrome.storage.sync.set(DEFAULT_SETTINGS);
     return;
   }
 
-  if (reason === 'update') {
+  if (reason === chrome.runtime.OnInstalledReason.UPDATE) {
     const existing = await chrome.storage.sync.get(null);
     // Migrate keys that are still at a previous default to the current default.
     for (const key of ['backKey', 'forwardKey'] as const) {

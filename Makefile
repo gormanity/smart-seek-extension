@@ -1,4 +1,4 @@
-.PHONY: all build typecheck test check pack clean watch
+.PHONY: all build typecheck lint test check pack clean watch
 
 all: build
 
@@ -8,11 +8,14 @@ build:
 typecheck:
 	npm run typecheck
 
+lint:
+	npm run lint
+
 test:
 	npm test
 
-## typecheck + test — fast local check before committing
-check: typecheck test
+## typecheck + lint + test — full local check before committing
+check: typecheck lint test
 
 pack:
 	npm run pack
