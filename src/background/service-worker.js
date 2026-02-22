@@ -34,24 +34,3 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   }
 });
 
-/**
- * When the options page saves new settings, broadcast them to all YTTV tabs
- * so the content script picks them up without requiring a page reload.
- */
-chrome.runtime.onMessage.addListener(function (msg, _sender, sendResponse) {
-  if (!msg || msg.type !== 'save-settings') return;
-
-  chrome.storage.sync.set(msg.settings).then(() => {
-    chrome.tabs.query({ url: '*://tv.youtube.com/*' }, (tabs) => {
-      for (const tab of tabs) {
-        chrome.tabs.sendMessage(tab.id, {
-          type: 'settings-updated',
-          settings: msg.settings,
-        }).catch(() => { /* tab may not have content script */ });
-      }
-    });
-    sendResponse({ ok: true });
-  });
-
-  return true; // keep message channel open for async sendResponse
-});

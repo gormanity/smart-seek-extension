@@ -100,7 +100,8 @@
   var HARDCODED_FORWARD_KEY = 'Shift+ArrowRight';
 
   // ── Storage shim ──────────────────────────────────────────────────────────
-  var storageSync = (typeof browser !== 'undefined' ? browser : chrome).storage.sync;
+  var chromeOrBrowser = (typeof browser !== 'undefined' ? browser : chrome);
+  var storageSync = chromeOrBrowser.storage.sync;
 
   // ── Live settings (updated without page reload) ───────────────────────────
   var settings = Object.assign({}, DEFAULT_SETTINGS);
@@ -137,10 +138,13 @@
     showOsd(direction, settings.seekAmount);
   }, /* capture */ true);
 
-  // ── Settings live-reload ──────────────────────────────────────────────────
-  chrome.runtime.onMessage.addListener(function (msg) {
-    if (msg && msg.type === 'settings-updated') {
-      Object.assign(settings, msg.settings);
+  // ── Live settings via storage changes ────────────────────────────────────
+  chromeOrBrowser.storage.onChanged.addListener(function (changes, area) {
+    if (area !== 'sync') return;
+    for (var key in changes) {
+      if (Object.prototype.hasOwnProperty.call(settings, key)) {
+        settings[key] = changes[key].newValue;
+      }
     }
   });
 }());

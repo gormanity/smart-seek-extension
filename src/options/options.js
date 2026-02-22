@@ -145,13 +145,6 @@ function initSaveButton() {
     const newSettings = { seekAmount, backKey, forwardKey };
     await getStorage().set(newSettings);
 
-    // Notify any open YouTube TV tabs so settings apply without a page reload.
-    const tabs = await chrome.tabs.query({ url: '*://tv.youtube.com/*' });
-    for (const tab of tabs) {
-      chrome.tabs.sendMessage(tab.id, { type: 'settings-updated', settings: newSettings })
-        .catch(() => { /* tab may not have content script yet */ });
-    }
-
     status.textContent = 'Settings saved.';
     setTimeout(() => { status.textContent = ''; }, 2000);
   });
