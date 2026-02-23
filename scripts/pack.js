@@ -33,4 +33,5 @@ function zip(name) {
 }
 
 zip(`smart-seek-${version}-chrome.zip`);
+zip(`smart-seek-${version}-edge.zip`);
 zip(`smart-seek-${version}-firefox.zip`);

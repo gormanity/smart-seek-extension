@@ -29,4 +29,5 @@ jobs:
           VERSION=$(node -p "require('./package.json').version")
           gh release upload "${{ github.ref_name }}" \
             "dist/smart-seek-${VERSION}-chrome.zip" \
+            "dist/smart-seek-${VERSION}-edge.zip" \
             "dist/smart-seek-${VERSION}-firefox.zip"
