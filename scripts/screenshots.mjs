@@ -16,13 +16,16 @@ const dir = resolve(fileURLToPath(import.meta.url), '../../store/screenshots');
 const files = ['01-osd', '02-popup', '03-options'];
 
 for (const name of files) {
+  const out = `${dir}/${name}.png`;
   execFileSync(CHROME, [
     '--headless=new',
-    `--screenshot=${dir}/${name}.png`,
-    '--window-size=1280,870',   // 870 = 800 visible + ~70px browser chrome overhead
+    `--screenshot=${out}`,
+    '--window-size=1280,870',   // 870 = 800 content + ~70px Chrome internal overhead
     '--force-device-scale-factor=1',
     '--no-sandbox',
     `file://${dir}/${name}.html`,
   ], { stdio: 'pipe' });
+  // Crop to the intended 1280×800 — Chrome captures the full window including overhead
+  execFileSync('magick', [out, '-crop', '1280x800+0+0', '+repage', out]);
   console.log(`${name}.png done`);
 }
