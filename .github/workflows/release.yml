@@ -26,6 +26,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          VERSION=$(node -p "require('./package.json').version")
           gh release upload "${{ github.ref_name }}" \
-            dist/smart-seek-chrome.zip \
-            dist/smart-seek-firefox.zip
+            "dist/smart-seek-${VERSION}-chrome.zip" \
+            "dist/smart-seek-${VERSION}-firefox.zip"
