@@ -1,0 +1,25 @@
+name: Safari Build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  safari:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - run: npm ci
+      - run: make build
+      - run: bash scripts/build-safari.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: safari-macos
+          path: dist/smart-seek-*-safari-macos.zip

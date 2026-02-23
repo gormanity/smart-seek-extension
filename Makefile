@@ -1,4 +1,4 @@
-.PHONY: all build typecheck lint test check pack clean watch
+.PHONY: all build typecheck lint test check pack safari clean watch
 
 all: build
 
@@ -19,6 +19,10 @@ check: typecheck lint test
 
 pack:
 	npm run pack
+
+## Build Safari app (macOS only; requires Xcode)
+safari: build
+	bash scripts/build-safari.sh
 
 clean:
 	rm -rf dist

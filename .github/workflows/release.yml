@@ -31,3 +31,27 @@ jobs:
             "dist/smart-seek-${VERSION}-chrome.zip" \
             "dist/smart-seek-${VERSION}-edge.zip" \
             "dist/smart-seek-${VERSION}-firefox.zip"
+
+  safari:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+      - run: bash scripts/build-safari.sh
+
+      - name: Upload Safari release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          gh release upload "${{ github.ref_name }}" \
+            "dist/smart-seek-${VERSION}-safari-macos.zip"
