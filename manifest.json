@@ -47,6 +47,11 @@
     "open_in_tab": true
   },
 
+  "data_collection_permissions": {
+    "required": [],
+    "optional": []
+  },
+
   "browser_specific_settings": {
     "gecko": {
       "id": "smart-seek@gormanity",
