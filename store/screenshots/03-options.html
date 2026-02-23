@@ -2,391 +2,137 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Smart Seek — Screenshot 3: Options Page</title>
+  <title>Smart Seek — Screenshot 3: Options</title>
   <style>
-    /* ── Reset ─────────────────────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
-      width: 1280px;
-      height: 800px;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #1a237e 0%, #6a1b9a 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       overflow: hidden;
-      margin: 0;
-    }
-
-    /* ── Browser chrome ────────────────────────────────────────────────────── */
-
-    .browser {
-      display: flex;
-      flex-direction: column;
-      width: 1280px;
-      height: 800px;
-    }
-
-    .title-bar {
-      height: 32px;
-      background: #202124;
-      display: flex;
-      align-items: center;
-      padding: 0 8px;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .traffic-light {
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .tl-close { background: #ff5f57; }
-    .tl-min   { background: #febc2e; }
-    .tl-max   { background: #28c840; }
-
-    .tab-strip {
-      height: 36px;
-      background: #202124;
-      display: flex;
-      align-items: flex-end;
-      padding: 0 0 0 12px;
-      flex-shrink: 0;
-    }
-
-    .tab {
-      height: 30px;
-      padding: 0 14px;
-      background: #0f0f0f;
-      border-radius: 8px 8px 0 0;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 12px;
-      color: rgba(255,255,255,0.9);
-      min-width: 220px;
-      max-width: 280px;
-      font-family: "YouTube Sans", "Roboto", system-ui, sans-serif;
-    }
-
-    .tab-favicon {
-      width: 14px; height: 14px;
-      flex-shrink: 0;
-    }
-
-    .tab-close {
-      margin-left: auto;
-      width: 14px; height: 14px;
-      flex-shrink: 0;
-      opacity: 0.5;
-    }
-
-    .address-bar-row {
-      height: 44px;
-      background: #35363a;
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      gap: 8px;
-      flex-shrink: 0;
-      font-family: "YouTube Sans", "Roboto", system-ui, sans-serif;
-    }
-
-    .nav-btn {
-      width: 28px; height: 28px;
-      display: flex; align-items: center; justify-content: center;
-      color: rgba(255,255,255,0.5);
-      flex-shrink: 0;
-    }
-    .nav-btn svg { width: 18px; height: 18px; fill: currentColor; }
-
-    .address-bar {
-      flex: 1;
-      height: 30px;
-      background: #202124;
-      border-radius: 15px;
-      display: flex;
-      align-items: center;
-      padding: 0 14px;
-      gap: 8px;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .lock-icon svg { width: 14px; height: 14px; fill: rgba(255,255,255,0.5); }
-    .url-text { font-size: 13px; color: rgba(255,255,255,0.85); }
-
-    .toolbar-icons {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      margin-left: auto;
-    }
-
-    .toolbar-icon {
-      width: 28px; height: 28px;
-      border-radius: 4px;
-      display: flex; align-items: center; justify-content: center;
-      color: rgba(255,255,255,0.5);
-    }
-    .toolbar-icon svg { width: 18px; height: 18px; fill: currentColor; }
-
-    .ext-icon { width: 20px; height: 20px; border-radius: 3px; }
-
-    /* ── Options page content (verbatim from options.css) ──────────────────── */
-
-    .page-content {
-      flex: 1;
-      overflow-y: auto;
-      /* options.css body styles */
-      font-family: "YouTube Sans", "Roboto", system-ui, sans-serif;
-      font-size: 15px;
-      color: #fff;
-      background: #0f0f0f;
-      padding: 2.5rem 1rem;
-    }
-
-    .page {
-      max-width: 400px;
-      margin: 0 auto;
-    }
-
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1.75rem;
-    }
-
-    .header img { border-radius: 6px; }
-
-    .header h1 {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin: 0;
     }
 
     .card {
-      background: #1f1f1f;
-      border-radius: 12px;
-      padding: 1.5rem;
-    }
-
-    .field { margin-bottom: 1.25rem; }
-    .field.last { margin-bottom: 0; }
-
-    .divider {
-      border: none;
-      border-top: 1px solid #333;
-      margin: 1.25rem 0;
-    }
-
-    label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: #aaa;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 0.5rem;
-    }
-
-    input {
+      background: white;
+      border-radius: 16px;
+      padding: 32px 60px;
+      max-width: 1060px;
       width: 100%;
-      padding: 0.6rem 0.85rem;
-      background: #2a2a2a;
-      border: 1px solid #3a3a3a;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 1rem;
-      font-family: inherit;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.35);
     }
 
-    .amount-row {
+    h1 {
+      font-size: 38px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .tagline {
+      font-size: 18px;
+      color: #555;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    /* ── Use-case rows ─────────────────────────────────────────────────── */
+
+    .use-case {
+      background: #f7f8fc;
+      border-radius: 10px;
+      padding: 14px 22px;
+      margin-bottom: 10px;
+      border-left: 6px solid #3949ab;
+    }
+
+    .use-case:last-child { margin-bottom: 0; }
+
+    .use-case-title {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 6px;
     }
 
-    .amount-row input {
-      width: 110px;
-      flex-shrink: 0;
-    }
-
-    .amount-unit {
-      color: #aaa;
-      font-size: 0.9rem;
-    }
-
-    .hint {
-      margin: 0.4rem 0 0;
-      font-size: 0.8rem;
-      color: #666;
+    .use-case-body {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #4a5568;
     }
 
     kbd {
       display: inline-block;
-      padding: 0.1em 0.4em;
-      background: #2a2a2a;
-      border: 1px solid #444;
+      padding: 1px 7px;
+      background: #e9ecef;
+      border: 1px solid #adb5bd;
       border-radius: 4px;
-      font-family: inherit;
-      font-size: 0.85em;
-      color: #aaa;
-      line-height: 1.5;
+      font-size: 0.9em;
+      font-family: "SF Mono", "Consolas", monospace;
+      color: #495057;
+      line-height: 1.6;
     }
-
-    .actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-top: 1.25rem;
-      flex-wrap: wrap;
-    }
-
-    button {
-      padding: 0.55rem 1.4rem;
-      border: none;
-      border-radius: 20px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-    }
-
-    #save { background: #fff; color: #0f0f0f; }
-
-    #reset {
-      background: transparent;
-      color: #aaa;
-      border: 1px solid #444;
-    }
-
-    .status { color: #4caf50; font-size: 0.9rem; }
-    .error  { color: #f44336; font-size: 0.9rem; }
   </style>
 </head>
 <body>
-  <div class="browser">
+  <div class="card">
+    <h1>Built For How You Watch</h1>
+    <p class="tagline">Two keys cover everything — and every detail is yours to configure</p>
 
-    <!-- Title bar -->
-    <div class="title-bar">
-      <div class="traffic-light tl-close"></div>
-      <div class="traffic-light tl-min"></div>
-      <div class="traffic-light tl-max"></div>
-    </div>
-
-    <!-- Tab strip -->
-    <div class="tab-strip">
-      <div class="tab">
-        <svg class="tab-favicon" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-          <rect width="128" height="128" rx="20" fill="#1a1a1a"/>
-          <rect x="10" y="21" width="108" height="66" rx="8" fill="none" stroke="white" stroke-width="6"/>
-          <rect x="56" y="87" width="16" height="14" rx="2" fill="white"/>
-          <rect x="40" y="101" width="48" height="8" rx="3" fill="white"/>
-          <svg x="40" y="30" width="48" height="48" viewBox="0 0 24 24">
-            <path fill="white" d="M4.293.293a1 1 0 011.414 1.414L4.414 3H13l.496.013A10 10 0 0113 23a1 1 0 010-2 8.001 8.001 0 00.396-15.99L13 5H4.414l1.293 1.293a1 1 0 01-1.414 1.414L.586 4 4.293.293Z"/>
-          </svg>
-        </svg>
-        <span class="tab-title">Smart Seek for YouTube TV — Settings</span>
-        <svg class="tab-close" viewBox="0 0 14 14" width="10" height="10">
-          <path d="M1 1l12 12M13 1L1 13" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none"/>
-        </svg>
+    <div class="use-case">
+      <div class="use-case-title">
+        <span>🏈</span>
+        <span>Replay that play</span>
+      </div>
+      <div class="use-case-body">
+        YouTube TV's 15-second rewind is too long for a sports play. Set it to 5 seconds and land exactly on the action.
       </div>
     </div>
 
-    <!-- Address bar -->
-    <div class="address-bar-row">
-      <div class="nav-btn">
-        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    <div class="use-case">
+      <div class="use-case-title">
+        <span>📺</span>
+        <span>Skip commercials without overshooting</span>
       </div>
-      <div class="nav-btn" style="opacity:0.3">
-        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-      </div>
-      <div class="nav-btn">
-        <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-      </div>
-
-      <div class="address-bar">
-        <span class="lock-icon">
-          <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-        </span>
-        <span class="url-text">chrome-extension://…/options/options.html</span>
-      </div>
-
-      <div class="toolbar-icons">
-        <div class="toolbar-icon">
-          <svg viewBox="0 0 24 24"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg>
-        </div>
-        <div class="toolbar-icon">
-          <svg class="ext-icon" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-            <rect width="128" height="128" rx="20" fill="#1a1a1a"/>
-            <rect x="10" y="21" width="108" height="66" rx="8" fill="none" stroke="white" stroke-width="6"/>
-            <rect x="56" y="87" width="16" height="14" rx="2" fill="white"/>
-            <rect x="40" y="101" width="48" height="8" rx="3" fill="white"/>
-            <svg x="40" y="30" width="48" height="48" viewBox="0 0 24 24">
-              <path fill="white" d="M4.293.293a1 1 0 011.414 1.414L4.414 3H13l.496.013A10 10 0 0113 23a1 1 0 010-2 8.001 8.001 0 00.396-15.99L13 5H4.414l1.293 1.293a1 1 0 01-1.414 1.414L.586 4 4.293.293Z"/>
-            </svg>
-          </svg>
-        </div>
-        <div class="nav-btn">
-          <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
-        </div>
+      <div class="use-case-body">
+        Step through ad breaks in precise increments — no more jumping past the show and scrubbing back.
       </div>
     </div>
 
-    <!-- Options page content -->
-    <div class="page-content">
-      <div class="page">
-
-        <header class="header">
-          <svg width="28" height="28" viewBox="0 0 128 128" style="border-radius:6px" xmlns="http://www.w3.org/2000/svg">
-            <rect width="128" height="128" rx="20" fill="#1a1a1a"/>
-            <rect x="10" y="21" width="108" height="66" rx="8" fill="none" stroke="white" stroke-width="6"/>
-            <rect x="56" y="87" width="16" height="14" rx="2" fill="white"/>
-            <rect x="40" y="101" width="48" height="8" rx="3" fill="white"/>
-            <svg x="40" y="30" width="48" height="48" viewBox="0 0 24 24">
-              <path fill="white" d="M4.293.293a1 1 0 011.414 1.414L4.414 3H13l.496.013A10 10 0 0113 23a1 1 0 010-2 8.001 8.001 0 00.396-15.99L13 5H4.414l1.293 1.293a1 1 0 01-1.414 1.414L.586 4 4.293.293Z"/>
-            </svg>
-          </svg>
-          <h1>Smart Seek for YouTube TV</h1>
-        </header>
-
-        <form id="settings-form" novalidate>
-          <div class="card">
-
-            <div class="field">
-              <label for="seek-amount">Seek amount</label>
-              <div class="amount-row">
-                <input id="seek-amount" type="number" value="5" min="0.1" max="300" step="0.1" />
-                <span class="amount-unit">seconds</span>
-              </div>
-            </div>
-
-            <hr class="divider" />
-
-            <div class="field">
-              <label for="back-key">Seek backward</label>
-              <input id="back-key" type="text" value="Shift+J" autocomplete="off" />
-              <p class="hint">Always active: <kbd>Shift</kbd>+<kbd>←</kbd></p>
-            </div>
-
-            <div class="field last">
-              <label for="forward-key">Seek forward</label>
-              <input id="forward-key" type="text" value="Shift+L" autocomplete="off" />
-              <p class="hint">Always active: <kbd>Shift</kbd>+<kbd>→</kbd></p>
-            </div>
-
-          </div>
-
-          <div class="actions">
-            <button type="button" id="save">Save</button>
-            <button type="button" id="reset">Reset to defaults</button>
-            <span id="status" class="status"></span>
-            <span id="error"  class="error"></span>
-          </div>
-        </form>
-
+    <div class="use-case">
+      <div class="use-case-title">
+        <span>💬</span>
+        <span>Never miss a line of dialogue</span>
+      </div>
+      <div class="use-case-body">
+        Missed what someone said? Rewind exactly 5 seconds — back to the line, not back to the previous scene.
       </div>
     </div>
 
+    <div class="use-case">
+      <div class="use-case-title">
+        <span>⚙️</span>
+        <span>Make it yours</span>
+      </div>
+      <div class="use-case-body">
+        Change the seek amount from 0.1 to 300 seconds. Remap to any key. Open Settings from the popup — done in seconds.
+      </div>
+    </div>
   </div>
 </body>
 </html>

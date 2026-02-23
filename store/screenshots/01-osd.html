@@ -7,284 +7,174 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
-      width: 1280px;
-      height: 800px;
-      overflow: hidden;
-      background: #000;
-      font-family: "YouTube Sans", "Roboto", system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
     }
 
-    /* ── Video background ──────────────────────────────────────────────────── */
+    body {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #1a237e 0%, #6a1b9a 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
 
-    .player {
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 52px 72px;
+      max-width: 980px;
+      width: 100%;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 14px;
+    }
+
+    .tagline {
+      font-size: 22px;
+      color: #555;
+      margin-bottom: 40px;
+    }
+
+    /* ── Mini video player demo ─────────────────────────────────────────── */
+
+    .video-demo {
+      background: #0a0a0c;
+      border-radius: 10px;
       position: relative;
-      width: 1280px;
-      height: 800px;
-      /* Suggest a dark, cinematic scene */
+      height: 280px;
+      overflow: hidden;
+      margin-bottom: 32px;
+      /* subtle video-like colour blobs */
       background:
-        radial-gradient(ellipse 900px 500px at 25% 35%, #102038 0%, transparent 70%),
-        radial-gradient(ellipse 700px 400px at 80% 65%, #2a1008 0%, transparent 65%),
-        radial-gradient(ellipse 600px 300px at 60% 20%, #0d1a12 0%, transparent 60%),
+        radial-gradient(ellipse 600px 340px at 22% 38%, #0d1a2e 0%, transparent 70%),
+        radial-gradient(ellipse 480px 280px at 78% 62%, #1e0a08 0%, transparent 65%),
         #060608;
     }
 
-    /* Subtle "scene" shapes to suggest depth / content */
-    .scene {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      opacity: 0.18;
-    }
-
-    .scene-horizon {
-      position: absolute;
-      bottom: 260px;
-      left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(to right, transparent, rgba(180,160,120,0.6) 30%, rgba(180,160,120,0.4) 70%, transparent);
-    }
-
-    .scene-road {
-      position: absolute;
-      bottom: 100px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 180px;
-      height: 200px;
-      background: linear-gradient(to bottom, rgba(150,140,120,0.8), rgba(80,75,65,0.3));
-      clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
-    }
-
-    /* ── Bottom gradient overlay ───────────────────────────────────────────── */
-
-    .controls-overlay {
+    /* gradient overlay at bottom */
+    .video-demo::after {
+      content: '';
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      height: 240px;
-      background: linear-gradient(to top,
-        rgba(0,0,0,0.97) 0%,
-        rgba(0,0,0,0.80) 50%,
-        transparent 100%);
+      height: 70px;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
     }
 
-    /* ── Player controls ───────────────────────────────────────────────────── */
-
-    .controls {
+    /* progress bar */
+    .progress {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
-      padding: 0 48px 32px;
-    }
-
-    .progress-wrap {
-      margin-bottom: 18px;
-    }
-
-    .progress-bar {
-      height: 4px;
-      background: rgba(255,255,255,0.25);
+      bottom: 14px; left: 20px; right: 20px;
+      height: 3px;
+      background: rgba(255,255,255,0.22);
       border-radius: 2px;
-      position: relative;
-      cursor: pointer;
+      z-index: 2;
     }
-
     .progress-fill {
       position: absolute;
       left: 0; top: 0; bottom: 0;
-      width: 31%;
+      width: 38%;
       background: #fff;
       border-radius: 2px;
     }
-
     .progress-thumb {
       position: absolute;
-      top: 50%; left: 31%;
+      top: 50%; left: 38%;
       transform: translate(-50%, -50%);
-      width: 14px; height: 14px;
+      width: 10px; height: 10px;
       background: #fff;
       border-radius: 50%;
-      box-shadow: 0 0 4px rgba(0,0,0,0.6);
     }
 
-    .controls-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .ctrl-btn {
-      width: 40px; height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: rgba(255,255,255,0.9);
-      flex-shrink: 0;
-    }
-
-    .ctrl-btn svg {
-      width: 26px; height: 26px;
-      fill: currentColor;
-    }
-
-    .ctrl-btn.large svg { width: 32px; height: 32px; }
-
-    .time-display {
-      color: rgba(255,255,255,0.85);
-      font-size: 14px;
-      white-space: nowrap;
-      margin-left: 4px;
-    }
-
-    .content-title {
-      margin-left: 20px;
-      color: rgba(255,255,255,0.75);
-      font-size: 14px;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-
-    .spacer { flex: 1; }
-
-    .ctrl-right {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* ── OSD overlay ───────────────────────────────────────────────────────── */
-
-    /* Pasted verbatim from seek-controller.css, animation replaced by frozen mid-state */
-    .yttv-seek-osd {
+    /* OSD indicator centred in the video area */
+    .osd {
       position: absolute;
-      top: 50%;
+      top: 44%;
       left: 50%;
-      transform: translate(-50%, -58%); /* slightly above center, above controls */
-      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 3;
     }
 
-    .yttv-seek-osd__content {
+    .osd-ring {
+      position: relative;
+      background: rgba(0,0,0,0.65);
+      border-radius: 50%;
+      padding: 22px;
+      width: 96px; height: 96px;
       display: flex;
       align-items: center;
       justify-content: center;
-      opacity: 1; /* frozen visible */
     }
 
-    .yttv-seek-osd__ring {
-      position: relative;
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 50%;
-      padding: 20px;
-    }
-
-    .yttv-seek-osd__ring svg {
-      width: 48px;
-      height: 48px;
+    .osd-ring svg {
+      width: 46px; height: 46px;
       fill: #fff;
       display: block;
-    }
-
-    /* Forward: mirror the arrow */
-    .yttv-seek-osd--forward .yttv-seek-osd__ring svg {
+      /* forward = mirror */
       transform: scaleX(-1);
     }
 
-    .yttv-seek-osd__label {
+    .osd-label {
       position: absolute;
       inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 700;
-      font-family: "YouTube Sans", "Roboto", sans-serif;
+    }
+
+    /* ── Feature note ───────────────────────────────────────────────────── */
+
+    .feature-note {
+      background: #f0f4ff;
+      border-left: 4px solid #3949ab;
+      padding: 18px 22px;
+      border-radius: 6px;
+      font-size: 18px;
+      color: #37474f;
     }
   </style>
 </head>
 <body>
-  <div class="player">
+  <div class="card">
+    <h1>The Seek Controls YouTube TV Should Have Had</h1>
+    <p class="tagline">Replay That Play. Not Half the Quarter.</p>
 
-    <!-- Subtle scene content -->
-    <div class="scene">
-      <div class="scene-horizon"></div>
-      <div class="scene-road"></div>
-    </div>
-
-    <!-- Bottom gradient -->
-    <div class="controls-overlay"></div>
-
-    <!-- OSD: seek forward 5 s, frozen in fully-visible state -->
-    <div class="yttv-seek-osd yttv-seek-osd--forward">
-      <div class="yttv-seek-osd__content">
-        <div class="yttv-seek-osd__ring">
+    <div class="video-demo">
+      <!-- Seek-forward OSD -->
+      <div class="osd">
+        <div class="osd-ring">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4.293.293a1 1 0 011.414 1.414L4.414 3H13l.496.013A10 10 0 0113
                      23a1 1 0 010-2 8.001 8.001 0 00.396-15.99L13 5H4.414l1.293 1.293a1 1 0
                      01-1.414 1.414L.586 4 4.293.293Z"/>
           </svg>
-          <span class="yttv-seek-osd__label">5</span>
+          <span class="osd-label">5</span>
         </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="progress">
+        <div class="progress-fill"></div>
+        <div class="progress-thumb"></div>
       </div>
     </div>
 
-    <!-- Player controls -->
-    <div class="controls">
-
-      <div class="progress-wrap">
-        <div class="progress-bar">
-          <div class="progress-fill"></div>
-          <div class="progress-thumb"></div>
-        </div>
-      </div>
-
-      <div class="controls-row">
-
-        <!-- Prev -->
-        <div class="ctrl-btn">
-          <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
-        </div>
-
-        <!-- Pause (currently playing) -->
-        <div class="ctrl-btn large">
-          <svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-        </div>
-
-        <!-- Next -->
-        <div class="ctrl-btn">
-          <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-        </div>
-
-        <!-- Volume -->
-        <div class="ctrl-btn">
-          <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-        </div>
-
-        <span class="time-display">42:18 / 1:28:35</span>
-        <span class="content-title">The Grand Tour &nbsp;·&nbsp; S4 E7 — "Carnage a Trois"</span>
-
-        <div class="spacer"></div>
-
-        <div class="ctrl-right">
-          <!-- Subtitles -->
-          <div class="ctrl-btn">
-            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0
-              2-.9 2-2V6c0-1.1-.9-2-2-2zm-10 7H8v-1H6v4h2v-1h2v1.5c0 .8-.7 1.5-1.5
-              1.5h-3C4.7 14 4 13.3 4 12.5v-3C4 8.7 4.7 8 5.5 8h3c.8 0 1.5.7 1.5 1.5V11zm8
-              0h-2v-1h-2v4h2v-1h2v1.5c0 .8-.7 1.5-1.5 1.5h-3c-.8 0-1.5-.7-1.5-1.5v-3c0-.8.7-1.5
-              1.5-1.5h3c.8 0 1.5.7 1.5 1.5V11z"/></svg>
-          </div>
-          <!-- Settings -->
-          <div class="ctrl-btn">
-            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-          </div>
-          <!-- Fullscreen -->
-          <div class="ctrl-btn">
-            <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-          </div>
-        </div>
-
-      </div>
+    <div class="feature-note">
+      🎯 Works with any keyboard shortcut you choose — defaults are <strong>Shift+J</strong> (back) and <strong>Shift+L</strong> (forward)
     </div>
-
   </div>
 </body>
 </html>
