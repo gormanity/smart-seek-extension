@@ -7,6 +7,7 @@
  *   icons/icon-16.png
  *   icons/icon-48.png
  *   icons/icon-128.png
+ *   icons/icon-300.png  (Edge Add-on store)
  */
 
 import { Resvg } from '@resvg/resvg-js';
@@ -17,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const svg  = readFileSync(join(root, 'icons/icon.svg'), 'utf8');
 
-for (const size of [16, 48, 128]) {
+for (const size of [16, 48, 128, 300]) {
   const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: size } });
   const png   = resvg.render().asPng();
   writeFileSync(join(root, `icons/icon-${size}.png`), png);
