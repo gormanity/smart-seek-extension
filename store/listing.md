@@ -105,6 +105,24 @@ Chrome Web Store requires a written justification for each permission.
 
 ---
 
+## Edge-specific: search terms
+
+<!-- Max 7 terms · 30 chars per term · 21 words total across all terms -->
+
+| # | Term                  | Words | Chars |
+|---|-----------------------|-------|-------|
+| 1 | YouTube TV seek       | 3     | 15    |
+| 2 | YouTube TV rewind     | 3     | 17    |
+| 3 | YouTube TV skip       | 3     | 15    |
+| 4 | YouTube TV keyboard   | 3     | 19    |
+| 5 | custom seek controls  | 3     | 20    |
+| 6 | seek forward backward | 3     | 21    |
+| 7 | YouTube TV playback   | 3     | 19    |
+
+_Total: 21 words_
+
+---
+
 ## Firefox-specific: source code submission
 
 Firefox AMO requires source code when the submitted zip contains compiled or
