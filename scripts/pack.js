@@ -24,7 +24,7 @@ function zip(name) {
   const out = join(dist, name);
   // Run from inside dist/ so archive paths are relative to the extension root,
   // and exclude any previously-generated zip archives.
-  execSync(`zip -r "${out}" . -x "*.zip"`, { cwd: dist, stdio: 'inherit' });
+  execSync(`zip -r "${out}" . -x "*.zip" -x "*.DS_Store"`, { cwd: dist, stdio: 'inherit' });
   console.log(`Created ${out}`);
 }
 
