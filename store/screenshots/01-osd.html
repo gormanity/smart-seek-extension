@@ -49,36 +49,113 @@
     /* ── Mini video player demo ─────────────────────────────────────────── */
 
     .video-demo {
-      background: #0a0a0c;
       border-radius: 10px;
       position: relative;
       height: 280px;
       overflow: hidden;
       margin-bottom: 32px;
-      /* subtle video-like colour blobs */
       background:
-        radial-gradient(ellipse 600px 340px at 22% 38%, #0d1a2e 0%, transparent 70%),
-        radial-gradient(ellipse 480px 280px at 78% 62%, #1e0a08 0%, transparent 65%),
-        #060608;
+        /* Flood lights — faint warm glow at top corners */
+        radial-gradient(ellipse 260px 180px at 14% 0%,  rgba(255,220,70,0.15) 0%, transparent 62%),
+        radial-gradient(ellipse 260px 180px at 86% 0%,  rgba(255,220,70,0.15) 0%, transparent 62%),
+        /* Crowd: muted reds left, muted navy right */
+        radial-gradient(ellipse 700px 140px at 32% 40%, rgba(120,12,22,0.55)  0%, transparent 64%),
+        radial-gradient(ellipse 500px 130px at 78% 38%, rgba(0,20,50,0.60)    0%, transparent 64%),
+        /* Sky → dark grass — everything stays dim */
+        linear-gradient(to bottom,
+          #030508  0%,
+          #070e18 30%,
+          #0b1628 42%,
+          #0d1e08 50%,
+          #122808 58%,
+          #183410 70%,
+          #1a3a12 100%
+        );
     }
+
 
     /* gradient overlay at bottom */
     .video-demo::after {
       content: '';
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      height: 70px;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+      height: 80px;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+      z-index: 1;
     }
 
-    /* progress bar */
+    /* ── Score bug ───────────────────────────────────────────────────────── */
+
+    .score-bug {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      font-family: "Arial Narrow", Arial, sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      z-index: 5;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      letter-spacing: 0.03em;
+    }
+
+    .score-team {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 5px 10px;
+    }
+
+    .score-team.away { background: #8b1a1a; }
+
+    .score-val {
+      background: #f0f0f0;
+      color: #111;
+      padding: 5px 9px;
+      min-width: 28px;
+      text-align: center;
+    }
+
+    .score-divider {
+      background: #ccc;
+      color: #555;
+      padding: 5px 5px;
+      font-size: 11px;
+    }
+
+    .score-clock {
+      background: #1a1a1a;
+      color: #f5c542;
+      padding: 5px 10px;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Broadcast time ──────────────────────────────────────────────────── */
+
+    .time-left, .time-total {
+      position: absolute;
+      bottom: 26px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      z-index: 4;
+      font-family: "SF Mono", "Consolas", monospace;
+    }
+    .time-left  { left: 20px; }
+    .time-total { right: 20px; }
+
+    /* ── Progress bar ───────────────────────────────────────────────────── */
+
     .progress {
       position: absolute;
       bottom: 14px; left: 20px; right: 20px;
       height: 3px;
       background: rgba(255,255,255,0.22);
       border-radius: 2px;
-      z-index: 2;
+      z-index: 3;
     }
     .progress-fill {
       position: absolute;
@@ -96,13 +173,14 @@
       border-radius: 50%;
     }
 
-    /* OSD indicator centred in the video area */
+    /* ── OSD indicator ───────────────────────────────────────────────────── */
+
     .osd {
       position: absolute;
       top: 44%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 3;
+      z-index: 4;
     }
 
     .osd-ring {
@@ -120,7 +198,6 @@
       width: 46px; height: 46px;
       fill: #fff;
       display: block;
-      /* forward = mirror */
       transform: scaleX(-1);
     }
 
@@ -135,7 +212,7 @@
       font-weight: 700;
     }
 
-    /* ── Feature note ───────────────────────────────────────────────────── */
+    /* ── Feature note ────────────────────────────────────────────────────── */
 
     .feature-note {
       background: #f0f4ff;
@@ -153,7 +230,18 @@
     <p class="tagline">Replay That Play. Not Half the Quarter.</p>
 
     <div class="video-demo">
-      <!-- Seek-forward OSD -->
+
+      <!-- Score bug -->
+      <div class="score-bug">
+        <span class="score-team">KC</span>
+        <span class="score-val">21</span>
+        <span class="score-divider">·</span>
+        <span class="score-val">17</span>
+        <span class="score-team away">DEN</span>
+        <span class="score-clock">Q3 &nbsp;8:42</span>
+      </div>
+
+      <!-- Seek OSD -->
       <div class="osd">
         <div class="osd-ring">
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -165,15 +253,20 @@
         </div>
       </div>
 
+      <!-- Time readouts -->
+      <span class="time-left">1:23:45</span>
+      <span class="time-total">-2:14:38</span>
+
       <!-- Progress bar -->
       <div class="progress">
         <div class="progress-fill"></div>
         <div class="progress-thumb"></div>
       </div>
+
     </div>
 
     <div class="feature-note">
-      🎯 Works with any keyboard shortcut you choose — defaults are <strong>Shift+J</strong> (back) and <strong>Shift+L</strong> (forward)
+      🎯 YouTube TV's built-in rewind jumps <strong>15 seconds</strong> — Smart Seek gives you finer control.
     </div>
   </div>
 </body>
