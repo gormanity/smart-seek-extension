@@ -46,7 +46,7 @@ manifest.json             # MV3 manifest (Chrome + Firefox); copied to dist/ at 
 dist/                     # Build output (git-ignored); load this as the unpacked extension
 scripts/
   build.js                # esbuild orchestrator (4 entry points + static asset copy)
-  pack.js                 # Produces yttv-seek-chrome.zip and yttv-seek-firefox.zip
+  pack.js                 # Produces smart-seek-chrome.zip and smart-seek-firefox.zip
 tests/
   seek-logic.test.ts
   seek-controller.test.ts
@@ -101,7 +101,7 @@ make build   # required first — populates dist/
 ### Pack for Distribution
 
 ```bash
-make pack   # Produces dist/yttv-seek-chrome.zip and yttv-seek-firefox.zip
+make pack   # Produces dist/smart-seek-chrome.zip and smart-seek-firefox.zip
 ```
 
 ## Settings

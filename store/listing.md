@@ -51,11 +51,11 @@ DEFAULT KEY BINDINGS
 
 PRIVACY
 
-No personal data is collected or transmitted. The extension stores only your preferences (seek amount and key bindings) locally via your browser's sync storage. No external servers are contacted. Full privacy policy: https://github.com/gormanity/yttv-seek-extension/blob/main/store/privacy-policy.md
+No personal data is collected or transmitted. The extension stores only your preferences (seek amount and key bindings) locally via your browser's sync storage. No external servers are contacted. Full privacy policy: https://github.com/gormanity/smart-seek-extension/blob/main/store/privacy-policy.md
 
 OPEN SOURCE
 
-Source code: https://github.com/gormanity/yttv-seek-extension
+Source code: https://github.com/gormanity/smart-seek-extension
 ```
 
 ---
@@ -72,8 +72,8 @@ Source code: https://github.com/gormanity/yttv-seek-extension
 
 ## Homepage / support URL
 
-- **Homepage:** https://github.com/gormanity/yttv-seek-extension
-- **Support:** https://github.com/gormanity/yttv-seek-extension/issues
+- **Homepage:** https://github.com/gormanity/smart-seek-extension
+- **Support:** https://github.com/gormanity/smart-seek-extension/issues
 
 ---
 

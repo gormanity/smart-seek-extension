@@ -1,6 +1,6 @@
 {
-  "name": "yttv-seek-extension",
-  "version": "1.0.0",
+  "name": "smart-seek-extension",
+  "version": "0.1.0",
   "description": "Configurable seek controls for YouTube TV",
   "type": "module",
   "scripts": {

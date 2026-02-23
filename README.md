@@ -79,7 +79,7 @@ make typecheck  # tsc --noEmit (type errors only)
 make lint       # ESLint
 make test       # Vitest (125 tests)
 make check      # typecheck + lint + test
-make pack       # dist/yttv-seek-chrome.zip + yttv-seek-firefox.zip
+make pack       # dist/smart-seek-chrome.zip + smart-seek-firefox.zip
 make watch      # Vitest in watch mode
 ```
 

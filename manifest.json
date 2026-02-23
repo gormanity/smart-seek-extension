@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Smart Seek for YouTube TV",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Adds configurable seek controls to YouTube TV (default: 5-second seek via Shift+J / Shift+L).",
 
   "icons": {
@@ -48,7 +48,7 @@
 
   "browser_specific_settings": {
     "gecko": {
-      "id": "yttv-seek@gormanity",
+      "id": "smart-seek@gormanity",
       "strict_min_version": "112.0"
     }
   }
