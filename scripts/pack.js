@@ -12,7 +12,7 @@
  */
 
 import { execSync } from 'child_process';
-import { mkdirSync, existsSync } from 'fs';
+import { mkdirSync, existsSync, rmSync } from 'fs';
 import { join } from 'path';
 
 const root = new URL('..', import.meta.url).pathname;
@@ -20,11 +20,14 @@ const dist = join(root, 'dist');
 
 if (!existsSync(dist)) mkdirSync(dist);
 
+// Remove macOS metadata files that macOS silently drops into directories.
+execSync('find . -name ".DS_Store" -delete', { cwd: dist });
+
 function zip(name) {
   const out = join(dist, name);
-  // Run from inside dist/ so archive paths are relative to the extension root,
-  // and exclude any previously-generated zip archives.
-  execSync(`zip -r "${out}" . -x "*.zip" -x "*.DS_Store"`, { cwd: dist, stdio: 'inherit' });
+  // Remove stale archive so zip always creates a fresh file (not an update).
+  if (existsSync(out)) rmSync(out);
+  execSync(`zip -r "${out}" . -x "*.zip"`, { cwd: dist, stdio: 'inherit' });
   console.log(`Created ${out}`);
 }
 

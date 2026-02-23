@@ -47,15 +47,14 @@
     "open_in_tab": true
   },
 
-  "data_collection_permissions": {
-    "required": [],
-    "optional": []
-  },
-
   "browser_specific_settings": {
     "gecko": {
       "id": "smart-seek@gormanity",
-      "strict_min_version": "112.0"
+      "strict_min_version": "112.0",
+      "data_collection_permissions": {
+        "required": [],
+        "optional": []
+      }
     }
   }
 }

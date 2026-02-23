@@ -21,15 +21,27 @@ let osdLabel: HTMLSpanElement | null = null;
 function createOsdEl(): HTMLDivElement {
   const el = document.createElement('div');
   el.className = 'smart-seek-osd';
-  el.innerHTML =
-    '<div class="smart-seek-osd__content">'
-    + '<div class="smart-seek-osd__ring">'
-    + '<svg viewBox="0 0 24 24" aria-hidden="true">'
-    + '<path d="' + ARROW_PATH + '"/>'
-    + '</svg>'
-    + '<span class="smart-seek-osd__label"></span>'
-    + '</div>'
-    + '</div>';
+
+  const content = document.createElement('div');
+  content.className = 'smart-seek-osd__content';
+
+  const ring = document.createElement('div');
+  ring.className = 'smart-seek-osd__ring';
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', ARROW_PATH);
+  svg.appendChild(path);
+
+  const label = document.createElement('span');
+  label.className = 'smart-seek-osd__label';
+
+  ring.appendChild(svg);
+  ring.appendChild(label);
+  content.appendChild(ring);
+  el.appendChild(content);
   document.body.appendChild(el);
   return el;
 }
