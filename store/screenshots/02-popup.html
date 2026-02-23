@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Seek — Screenshot 2: Popup</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 1280px;
+      height: 800px;
+      overflow: hidden;
+      background: #000;
+      font-family: "YouTube Sans", "Roboto", system-ui, sans-serif;
+    }
+
+    /* ── Browser chrome ────────────────────────────────────────────────────── */
+
+    .browser {
+      display: flex;
+      flex-direction: column;
+      width: 1280px;
+      height: 800px;
+    }
+
+    /* Title bar */
+    .title-bar {
+      height: 32px;
+      background: #202124;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .traffic-light {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .tl-close  { background: #ff5f57; }
+    .tl-min    { background: #febc2e; }
+    .tl-max    { background: #28c840; }
+
+    /* Tab strip */
+    .tab-strip {
+      height: 36px;
+      background: #202124;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 0 0 12px;
+      flex-shrink: 0;
+    }
+
+    .tab {
+      height: 30px;
+      padding: 0 14px;
+      background: #35363a;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      min-width: 180px;
+      max-width: 240px;
+    }
+
+    .tab.active {
+      background: #0f0f0f; /* matches YouTube TV dark background */
+      color: rgba(255,255,255,0.9);
+    }
+
+    .tab-favicon {
+      width: 14px; height: 14px;
+      flex-shrink: 0;
+    }
+
+    .tab-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tab-close {
+      margin-left: auto;
+      width: 14px; height: 14px;
+      flex-shrink: 0;
+      opacity: 0.5;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Address bar row */
+    .address-bar-row {
+      height: 44px;
+      background: #35363a;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.5);
+      flex-shrink: 0;
+    }
+
+    .nav-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+    .address-bar {
+      flex: 1;
+      height: 30px;
+      background: #202124;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .lock-icon {
+      width: 14px; height: 14px;
+      color: rgba(255,255,255,0.5);
+      flex-shrink: 0;
+    }
+
+    .lock-icon svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .url-text {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .toolbar-icons {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: auto;
+    }
+
+    .toolbar-icon {
+      width: 28px; height: 28px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.5);
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .toolbar-icon svg { width: 18px; height: 18px; fill: currentColor; }
+
+    /* Smart Seek extension icon — highlighted (popup is open) */
+    .toolbar-icon.ext-active {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .ext-icon {
+      width: 20px; height: 20px;
+      border-radius: 3px;
+    }
+
+    /* ── Page content (YouTube TV background) ──────────────────────────────── */
+
+    .page-content {
+      flex: 1;
+      position: relative;
+      background:
+        radial-gradient(ellipse 900px 500px at 25% 35%, #102038 0%, transparent 70%),
+        radial-gradient(ellipse 700px 400px at 80% 65%, #2a1008 0%, transparent 65%),
+        #060608;
+      overflow: hidden;
+    }
+
+    /* Bottom controls overlay (same as screenshot 1 but dimmer — popup is in focus) */
+    .page-content::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+    }
+
+    /* ── Popup ─────────────────────────────────────────────────────────────── */
+
+    /* Verbatim from popup.css */
+    .popup-wrap {
+      position: absolute;
+      top: 4px;   /* gap between address bar and popup */
+      right: 80px; /* aligned under the extension icon */
+      z-index: 10;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.7));
+    }
+
+    /* Popup caret */
+    .popup-caret {
+      width: 14px; height: 8px;
+      margin-left: auto;
+      margin-right: 12px;
+      overflow: visible;
+    }
+
+    .popup-caret::before {
+      content: '';
+      display: block;
+      width: 0; height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-bottom: 8px solid #0f0f0f;
+      margin-left: auto;
+      margin-right: 4px;
+    }
+
+    .popup-body {
+      width: 260px;
+      background: #0f0f0f;
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .popup-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .popup-header-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .popup-card {
+      background: #1f1f1f;
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .popup-section-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+
+    .popup-divider {
+      border: none;
+      border-top: 1px solid #333;
+      margin: 12px 0;
+    }
+
+    .popup-amount-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .popup-amount-btn {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: #2a2a2a;
+      color: #fff;
+      font-size: 1.3rem;
+      line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .popup-amount-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+    }
+
+    .popup-amount-value {
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1;
+      min-width: 3ch;
+      text-align: center;
+    }
+
+    .popup-amount-unit {
+      font-size: 0.7rem;
+      color: #666;
+    }
+
+    .popup-binding-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .popup-binding-row:last-child { margin-bottom: 0; }
+
+    .popup-binding-label {
+      color: #aaa;
+      font-size: 0.8rem;
+    }
+
+    .popup-binding-value {
+      font-size: 0.78rem;
+      background: #2a2a2a;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: 2px 7px;
+      color: #ddd;
+      font-family: "SF Mono", "Consolas", monospace;
+    }
+
+    .popup-settings-link {
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 0.8rem;
+      font-family: inherit;
+      text-align: center;
+      padding: 4px 0 2px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="browser">
+
+    <!-- Title bar -->
+    <div class="title-bar">
+      <div class="traffic-light tl-close"></div>
+      <div class="traffic-light tl-min"></div>
+      <div class="traffic-light tl-max"></div>
+    </div>
+
+    <!-- Tab strip -->
+    <div class="tab-strip">
+      <!-- Active tab: YouTube TV -->
+      <div class="tab active">
+        <!-- YouTube TV favicon: red "TV" mark -->
+        <svg class="tab-favicon" viewBox="0 0 16 16">
+          <rect width="16" height="16" rx="2" fill="#ff0000"/>
+          <text x="8" y="12" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="sans-serif">TV</text>
+        </svg>
+        <span class="tab-title">YouTube TV</span>
+        <span class="tab-close">
+          <svg viewBox="0 0 14 14" width="10" height="10" fill="rgba(255,255,255,0.5)">
+            <path d="M1 1l12 12M13 1L1 13" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none"/>
+          </svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- Address bar row -->
+    <div class="address-bar-row">
+
+      <div class="nav-btn">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </div>
+      <div class="nav-btn" style="opacity:0.3">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </div>
+      <div class="nav-btn">
+        <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+      </div>
+
+      <div class="address-bar">
+        <span class="lock-icon">
+          <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        </span>
+        <span class="url-text">tv.youtube.com</span>
+      </div>
+
+      <div class="toolbar-icons">
+        <!-- Generic extension icon (dimmed) -->
+        <div class="toolbar-icon">
+          <svg viewBox="0 0 24 24"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg>
+        </div>
+        <!-- Smart Seek icon — active (popup open) -->
+        <div class="toolbar-icon ext-active">
+          <svg class="ext-icon" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+            <rect width="128" height="128" rx="20" fill="#1a1a1a"/>
+            <rect x="10" y="21" width="108" height="66" rx="8" fill="none" stroke="white" stroke-width="6"/>
+            <rect x="56" y="87" width="16" height="14" rx="2" fill="white"/>
+            <rect x="40" y="101" width="48" height="8" rx="3" fill="white"/>
+            <svg x="40" y="30" width="48" height="48" viewBox="0 0 24 24">
+              <path fill="white" d="M4.293.293a1 1 0 011.414 1.414L4.414 3H13l.496.013A10 10 0 0113 23a1 1 0 010-2 8.001 8.001 0 00.396-15.99L13 5H4.414l1.293 1.293a1 1 0 01-1.414 1.414L.586 4 4.293.293Z"/>
+            </svg>
+          </svg>
+        </div>
+        <!-- Chrome menu -->
+        <div class="nav-btn">
+          <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Page content with popup overlay -->
+    <div class="page-content">
+
+      <!-- Popup: positioned below the Smart Seek toolbar icon -->
+      <div class="popup-wrap">
+        <div class="popup-caret"></div>
+        <div class="popup-body">
+
+          <div class="popup-header">
+            <svg class="ext-icon" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+              <rect width="128" height="128" rx="20" fill="#1a1a1a"/>
+              <rect x="10" y="21" width="108" height="66" rx="8" fill="none" stroke="white" stroke-width="6"/>
+              <rect x="56" y="87" width="16" height="14" rx="2" fill="white"/>
+              <rect x="40" y="101" width="48" height="8" rx="3" fill="white"/>
+              <svg x="40" y="30" width="48" height="48" viewBox="0 0 24 24">
+                <path fill="white" d="M4.293.293a1 1 0 011.414 1.414L4.414 3H13l.496.013A10 10 0 0113 23a1 1 0 010-2 8.001 8.001 0 00.396-15.99L13 5H4.414l1.293 1.293a1 1 0 01-1.414 1.414L.586 4 4.293.293Z"/>
+              </svg>
+            </svg>
+            <span class="popup-header-title">Smart Seek</span>
+          </div>
+
+          <div class="popup-card">
+
+            <div class="popup-section-label">Seek amount</div>
+            <div class="popup-amount-row">
+              <div class="popup-amount-btn">−</div>
+              <div class="popup-amount-display">
+                <span class="popup-amount-value">5</span>
+                <span class="popup-amount-unit">seconds</span>
+              </div>
+              <div class="popup-amount-btn">+</div>
+            </div>
+
+            <hr class="popup-divider">
+
+            <div class="popup-section-label">Key bindings</div>
+            <div class="popup-binding-row">
+              <span class="popup-binding-label">Seek backward</span>
+              <span class="popup-binding-value">Shift+J</span>
+            </div>
+            <div class="popup-binding-row">
+              <span class="popup-binding-label">Seek forward</span>
+              <span class="popup-binding-value">Shift+L</span>
+            </div>
+
+          </div>
+
+          <button class="popup-settings-link">Open Settings</button>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
