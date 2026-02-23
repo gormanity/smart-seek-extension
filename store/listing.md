@@ -6,27 +6,28 @@
 
 **Smart Seek for YouTube TV**
 
-(75-char limit on Chrome/Edge; 50-char limit on Firefox — our name is 29 chars, fine everywhere)
+(75-char limit on Chrome/Edge; 50-char limit on Firefox — our name is 29 chars,
+fine everywhere)
 
 ---
 
 ## Short description
 
-> Used by Chrome Web Store and Edge Add-ons (≤132 chars).
-> Used as the Firefox "Summary" field (≤250 chars; same text works fine).
+> Used by Chrome Web Store and Edge Add-ons (≤132 chars). Used as the Firefox
+> "Summary" field (≤250 chars; same text works fine).
 
 ```
-Configurable seek controls for YouTube TV. Jump by any amount with custom key bindings. Default: 5 s via Shift+J / Shift+L.
+Configurable seek controls for YouTube TV. Jump by any amount with custom key bindings.
 ```
 
-*(123 chars)*
+_(123 chars)_
 
 ---
 
 ## Detailed description
 
-> Used by all three stores. Plain text; stores render line breaks.
-> Chrome/Edge: ≤16,000 chars. Firefox: no hard limit in practice.
+> Used by all three stores. Plain text; stores render line breaks. Chrome/Edge:
+> ≤16,000 chars. Firefox: no hard limit in practice.
 
 ```
 Smart Seek adds configurable keyboard seek controls to YouTube TV (tv.youtube.com).
@@ -62,11 +63,11 @@ Source code: https://github.com/gormanity/smart-seek-extension
 
 ## Category
 
-| Store          | Category      |
-|----------------|---------------|
-| Chrome         | Productivity  |
-| Firefox        | Other         |
-| Edge           | Productivity  |
+| Store   | Category     |
+| ------- | ------------ |
+| Chrome  | Productivity |
+| Firefox | Other        |
+| Edge    | Productivity |
 
 ---
 
@@ -97,18 +98,18 @@ seek-amount adjustment.
 
 Chrome Web Store requires a written justification for each permission.
 
-| Permission | Justification |
-|------------|---------------|
-| `storage` | Stores the user's seek amount and key binding preferences using `chrome.storage.sync` so settings persist across sessions and sync across devices. |
+| Permission                              | Justification                                                                                                                                                   |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `storage`                               | Stores the user's seek amount and key binding preferences using `chrome.storage.sync` so settings persist across sessions and sync across devices.              |
 | Host permission: `*://tv.youtube.com/*` | The extension must inject a content script into YouTube TV pages to intercept keyboard events and control the video player. It has no access to any other site. |
 
 ---
 
 ## Firefox-specific: source code submission
 
-Firefox AMO requires source code when the submitted zip contains compiled
-or minified code. Submit the repository source (or a zip of it) and include
-this build note:
+Firefox AMO requires source code when the submitted zip contains compiled or
+minified code. Submit the repository source (or a zip of it) and include this
+build note:
 
 ```
 Build instructions:
