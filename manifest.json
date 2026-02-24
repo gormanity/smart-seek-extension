@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Smart Seek for YouTube TV",
   "version": "0.1.0",
-  "description": "Adds configurable seek controls to YouTube TV (default: 5-second seek via Shift+J / Shift+L).",
+  "description": "Skip forward and back by any amount on YouTube TV.",
 
   "icons": {
     "16":  "icons/icon-16.png",
