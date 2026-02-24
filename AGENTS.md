@@ -4,7 +4,7 @@ This file describes how to work effectively on the Smart Seek for YouTube TV cod
 
 ## Project Overview
 
-A Chrome + Firefox MV3 browser extension that adds configurable seek controls to YouTube TV (`tv.youtube.com`). See PROJECT.md for full context.
+A Chrome, Edge, Firefox, and Safari MV3 browser extension that adds configurable seek controls to YouTube TV (`tv.youtube.com`). See PROJECT.md for full context.
 
 ## Repository Layout
 
@@ -58,6 +58,11 @@ This repo uses `jj` with a colocated git backend.
 - Push to GitHub: `jj git push --remote origin --bookmark main`
 
 **Commit discipline:** Each logical unit of work gets its own commit. Do not bundle unrelated changes. Prefer small, focused commits.
+
+## Releases
+
+- **Suggest a new release** after any user-facing change to the extension: new features, bug fixes, or behaviour changes. Changes that are purely internal — CI, build tooling, README, repo metadata — do not warrant a release on their own.
+- **Release notes must cover only extension changes** — what a user cares about. Do not include repo or tooling changes.
 
 ## Workflow
 
