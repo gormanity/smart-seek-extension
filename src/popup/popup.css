@@ -34,6 +34,40 @@ body {
   font-weight: 700;
 }
 
+/* ── Permission banner ───────────────────────────────────────────────────── */
+
+.permission-banner {
+  background: #2a1f1f;
+  border: 1px solid #5a3a3a;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.permission-banner__text {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  color: #ddd;
+  line-height: 1.35;
+}
+
+.permission-banner__btn {
+  width: 100%;
+  background: #cc0000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.permission-banner__btn:hover {
+  background: #aa0000;
+}
+
 /* ── Card ────────────────────────────────────────────────────────────────── */
 
 .card {

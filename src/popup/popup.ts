@@ -55,3 +55,23 @@ increaseEl.addEventListener('click', () => setAmount(settings.seekAmount + STEP)
 document.getElementById('open-settings')!.addEventListener('click', () => {
   void chrome.runtime.openOptionsPage();
 });
+
+// ── Host permission prompt ────────────────────────────────────────────────────
+// Firefox MV3 treats host_permissions as user-controlled — even on AMO installs
+// the user may need to grant access to tv.youtube.com before content scripts
+// inject. Chrome and other Chromium-based browsers auto-grant, so this UI is
+// scoped to Firefox-based browsers via the project's existing typeof shim.
+
+if (typeof browser !== 'undefined') {
+  const ORIGIN   = '*://tv.youtube.com/*';
+  const perms    = browser.permissions;
+  const banner   = document.getElementById('permission-banner') as HTMLDivElement;
+  const grantBtn = document.getElementById('grant-permission')  as HTMLButtonElement;
+
+  banner.hidden = await perms.contains({ origins: [ORIGIN] });
+
+  grantBtn.addEventListener('click', async () => {
+    const granted = await perms.request({ origins: [ORIGIN] });
+    if (granted) banner.hidden = true;
+  });
+}

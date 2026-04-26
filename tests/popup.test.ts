@@ -7,8 +7,19 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
  * Call vi.resetModules() before this in each beforeEach so that the module
  * re-runs with the fresh DOM and fresh mock on every test.
  */
-function setupPopup(seekAmount: number, backKey = 'Shift+J', forwardKey = 'Shift+L') {
+function setupPopup(
+  seekAmount: number,
+  backKey = 'Shift+J',
+  forwardKey = 'Shift+L',
+  opts: { firefox?: boolean; hasAccess?: boolean; grantOnRequest?: boolean } = {},
+) {
+  const firefox        = opts.firefox        ?? false;
+  const hasAccess      = opts.hasAccess      ?? true;
+  const grantOnRequest = opts.grantOnRequest ?? true;
+
   document.body.innerHTML = `
+    <div id="permission-banner" hidden></div>
+    <button id="grant-permission"></button>
     <span id="amount-value"></span>
     <button id="decrease"></button>
     <button id="increase"></button>
@@ -19,18 +30,29 @@ function setupPopup(seekAmount: number, backKey = 'Shift+J', forwardKey = 'Shift
 
   const mockSet             = vi.fn().mockResolvedValue(undefined);
   const mockOpenOptionsPage = vi.fn();
+  const mockContains        = vi.fn().mockResolvedValue(hasAccess);
+  const mockRequest         = vi.fn().mockResolvedValue(grantOnRequest);
 
-  (globalThis as Record<string, unknown>).chrome = {
+  const api = {
     storage: {
       sync: {
         get: vi.fn().mockResolvedValue({ seekAmount, backKey, forwardKey }),
         set: mockSet,
       },
     },
-    runtime: { openOptionsPage: mockOpenOptionsPage },
+    runtime:     { openOptionsPage: mockOpenOptionsPage },
+    permissions: { contains: mockContains, request: mockRequest },
   };
 
-  return { mockSet, mockOpenOptionsPage };
+  const g = globalThis as Record<string, unknown>;
+  g.chrome = api;
+  if (firefox) {
+    g.browser = api;
+  } else {
+    delete g.browser;
+  }
+
+  return { mockSet, mockOpenOptionsPage, mockContains, mockRequest };
 }
 
 const get = (id: string) => document.getElementById(id)!;
@@ -189,6 +211,94 @@ describe('popup', () => {
     it('calls chrome.runtime.openOptionsPage', () => {
       btn('open-settings').click();
       expect(mockOpenOptionsPage).toHaveBeenCalled();
+    });
+  });
+
+  describe('permission banner (Firefox)', () => {
+    const banner = () => get('permission-banner') as HTMLDivElement;
+
+    describe('when access is already granted', () => {
+      let mockContains: ReturnType<typeof vi.fn>;
+
+      beforeEach(async () => {
+        vi.resetModules();
+        ({ mockContains } = setupPopup(5, 'Shift+J', 'Shift+L', { firefox: true, hasAccess: true }));
+        await import('../src/popup/popup.js');
+      });
+
+      afterEach(() => { document.body.innerHTML = ''; });
+
+      it('checks for the host permission', () => {
+        expect(mockContains).toHaveBeenCalledWith({ origins: ['*://tv.youtube.com/*'] });
+      });
+
+      it('keeps the banner hidden', () => {
+        expect(banner().hidden).toBe(true);
+      });
+    });
+
+    describe('when access is missing', () => {
+      let mockRequest: ReturnType<typeof vi.fn>;
+
+      beforeEach(async () => {
+        vi.resetModules();
+        ({ mockRequest } = setupPopup(5, 'Shift+J', 'Shift+L', { firefox: true, hasAccess: false }));
+        await import('../src/popup/popup.js');
+      });
+
+      afterEach(() => { document.body.innerHTML = ''; });
+
+      it('shows the banner', () => {
+        expect(banner().hidden).toBe(false);
+      });
+
+      it('requests the host permission when the grant button is clicked', async () => {
+        btn('grant-permission').click();
+        await new Promise((r) => setTimeout(r, 0));
+        expect(mockRequest).toHaveBeenCalledWith({ origins: ['*://tv.youtube.com/*'] });
+      });
+
+      it('hides the banner once permission is granted', async () => {
+        btn('grant-permission').click();
+        await new Promise((r) => setTimeout(r, 0));
+        expect(banner().hidden).toBe(true);
+      });
+    });
+
+    describe('when the user denies the request', () => {
+      beforeEach(async () => {
+        vi.resetModules();
+        setupPopup(5, 'Shift+J', 'Shift+L', { firefox: true, hasAccess: false, grantOnRequest: false });
+        await import('../src/popup/popup.js');
+      });
+
+      afterEach(() => { document.body.innerHTML = ''; });
+
+      it('keeps the banner visible', async () => {
+        btn('grant-permission').click();
+        await new Promise((r) => setTimeout(r, 0));
+        expect(banner().hidden).toBe(false);
+      });
+    });
+
+    describe('on Chrome (no browser global)', () => {
+      let mockContains: ReturnType<typeof vi.fn>;
+
+      beforeEach(async () => {
+        vi.resetModules();
+        ({ mockContains } = setupPopup(5, 'Shift+J', 'Shift+L', { firefox: false }));
+        await import('../src/popup/popup.js');
+      });
+
+      afterEach(() => { document.body.innerHTML = ''; });
+
+      it('does not check permissions', () => {
+        expect(mockContains).not.toHaveBeenCalled();
+      });
+
+      it('keeps the banner hidden', () => {
+        expect(banner().hidden).toBe(true);
+      });
     });
   });
 
