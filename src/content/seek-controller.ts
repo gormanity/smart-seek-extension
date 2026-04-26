@@ -7,6 +7,8 @@
 
 import { DEFAULT_SETTINGS, matchesKey, applySeek, formatSeekLabel } from './seek-logic.js';
 
+if (__DEV__) console.debug('[Smart Seek] content script loaded');
+
 // ── OSD (on-screen display) ───────────────────────────────────────────────
 
 // Arrow-only path from YouTube TV's seek icon (digit subpaths omitted so
@@ -101,6 +103,7 @@ document.addEventListener('keydown', (event) => {
   event.stopImmediatePropagation();
 
   const direction = isForward ? 'forward' : 'back';
+  if (__DEV__) console.debug(`[Smart Seek] seek ${direction} ${settings.seekAmount}s`);
   applySeek(video, isForward ? settings.seekAmount : -settings.seekAmount);
   showOsd(direction, settings.seekAmount);
 }, /* capture */ true);

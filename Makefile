@@ -1,9 +1,12 @@
-.PHONY: all build typecheck lint format format-check test check pack safari clean watch
+.PHONY: all build build-dev typecheck lint format format-check test check pack safari clean watch
 
 all: build
 
 build:
 	npm run build
+
+build-dev:
+	npm run build:dev
 
 typecheck:
 	npm run typecheck
@@ -31,7 +34,7 @@ safari: build
 	bash scripts/build-safari.sh
 
 clean:
-	rm -rf dist
+	rm -rf dist dist-dev
 
 watch:
 	npm run test:watch

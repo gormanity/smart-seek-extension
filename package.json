@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.js",
+    "build:dev": "node scripts/build.js --dev",
     "typecheck": "tsc",
     "lint": "eslint src/ tests/",
     "format": "prettier --write .",
