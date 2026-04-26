@@ -2,9 +2,13 @@
 # build-safari.sh — Convert the built web extension to a Safari Web Extension app.
 #
 # Requires macOS with Xcode (xcrun safari-web-extension-converter).
-# Run `make build` first to populate dist/.
+# Run `make build` first to populate dist/chrome/.
 #
 # Output: dist/smart-seek-{version}-safari-macos.zip
+#
+# Safari uses the Chrome-flavored unpacked build as its source (service_worker
+# only, no background.scripts). A few additional Safari-specific manifest
+# tweaks are applied here.
 
 set -euo pipefail
 
@@ -12,12 +16,12 @@ APP_NAME="Smart Seek for YouTube TV"
 BUNDLE_ID="com.gormanity.smart-seek"
 SAFARI_DIR="safari-build"
 VERSION=$(node -p "require('./package.json').version")
-MANIFEST="dist/manifest.json"
+SOURCE_DIR="dist/chrome"
+MANIFEST="$SOURCE_DIR/manifest.json"
 APP_PATH="$SAFARI_DIR/DerivedData/Build/Products/Release/$APP_NAME.app"
 ZIP="dist/smart-seek-${VERSION}-safari-macos.zip"
 
-# Patch manifest for Safari (same as Chrome: service_worker only, no background.scripts).
-# Save the original and restore it on exit so dist/ stays clean.
+# Save and restore the manifest so dist/chrome/ stays clean for Chrome packaging.
 MANIFEST_BACKUP=$(mktemp)
 cp "$MANIFEST" "$MANIFEST_BACKUP"
 restore_manifest() { cp "$MANIFEST_BACKUP" "$MANIFEST"; rm -f "$MANIFEST_BACKUP"; }
@@ -27,7 +31,6 @@ echo "→ Patching manifest for Safari…"
 node -e "
   const fs = require('fs');
   const m = JSON.parse(fs.readFileSync('$MANIFEST', 'utf8'));
-  delete m.background.scripts;          // Chrome/Safari MV3: service_worker only
   delete m.background.type;             // unsupported by Safari (service workers are modules by default)
   if (m.options_ui) delete m.options_ui.open_in_tab;  // unsupported by Safari
   delete m.browser_specific_settings;   // Firefox-only key
@@ -35,7 +38,7 @@ node -e "
 "
 
 echo "→ Converting extension to Xcode project…"
-xcrun safari-web-extension-converter dist/ \
+xcrun safari-web-extension-converter "$SOURCE_DIR" \
   --project-location "$SAFARI_DIR" \
   --app-name "$APP_NAME" \
   --bundle-identifier "$BUNDLE_ID" \
