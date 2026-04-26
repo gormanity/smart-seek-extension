@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Smart Seek for YouTube TV",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Skip forward and back by any amount on YouTube TV.",
 
   "icons": {

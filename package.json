@@ -1,6 +1,6 @@
 {
   "name": "smart-seek-extension",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Configurable seek controls for YouTube TV",
   "type": "module",
   "scripts": {
