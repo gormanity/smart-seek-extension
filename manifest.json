@@ -50,11 +50,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "smart-seek@gormanity",
-      "strict_min_version": "112.0",
-      "data_collection_permissions": {
-        "required": ["none"],
-        "optional": []
-      }
+      "strict_min_version": "112.0"
     }
   }
 }
