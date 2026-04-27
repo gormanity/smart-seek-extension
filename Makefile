@@ -1,4 +1,4 @@
-.PHONY: all build build-dev typecheck lint format format-check test check pack safari clean watch
+.PHONY: all build build-dev listings typecheck lint format format-check test check pack safari clean watch
 
 all: build
 
@@ -7,6 +7,10 @@ build:
 
 build-dev:
 	npm run build:dev
+
+## Generate per-store listing copy from store/listing.data.js → dist/store/
+listings:
+	npm run build:listings
 
 typecheck:
 	npm run typecheck
