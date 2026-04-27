@@ -4,3 +4,4 @@ dist-dev/
 safari-build/
 *.zip
 .DS_Store
+.claude/
