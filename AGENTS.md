@@ -71,6 +71,55 @@ bundle unrelated changes. Prefer small, focused commits.
 - **Release notes must cover only extension changes** — what a user cares about.
   Do not include repo or tooling changes.
 
+### Cutting a release
+
+Pushing a tag matching `v*` triggers `.github/workflows/release.yml`, which
+builds the per-store zips and uploads them to a GitHub release of the same name.
+Run the steps below in order. Steps marked **(approval gate)** block — do not
+proceed until the user explicitly approves.
+
+1. **Draft release notes (approval gate).** Walk commits since the last tag
+   (`jj log` / `git log <last-tag>..HEAD`), group user-facing changes (Features
+   / Fixes / Behavior), and present the draft to the user. Do not move on until
+   the user approves.
+2. **Review the listing data (approval gate).** Open `store/listing.data.js` and
+   check every field against what's actually shipping in this release —
+   especially `copy.versionNotes` (almost always needs updating),
+   `copy.detailedDescription`, the feature bullets, and the default key
+   bindings. Propose concrete edits and show a diff. Wait for user approval
+   before saving.
+3. **Bump versions.** Update `version` in both `package.json` and
+   `manifest.json` — they must match.
+4. **Rebuild per-store listings.** Run `make listings` to regenerate
+   `dist/store/{chrome,edge,firefox}.md` from the updated data file. These files
+   are git-ignored; they are the copy-paste source for each store's submission
+   form.
+5. **Verify.** Run `make check` and `make pack`. Both must pass before tagging.
+6. **Commit and push main.** One commit covering the version bump + listing data
+   updates (rebuilt outputs are not committed). Then
+   `jj git push --remote origin --bookmark main`.
+7. **Tag and push the tag.** Via the colocated git backend:
+
+   ```
+   git tag -a vX.Y.Z -m "vX.Y.Z" <commit>
+   git push origin vX.Y.Z
+   ```
+
+   The release workflow will run, create the GitHub release if it does not
+   already exist, and upload the per-store zip assets.
+
+8. **Set the approved release notes on the GitHub release.** The workflow's
+   `--generate-notes` output is a placeholder; replace it with the notes the
+   user approved in step 1:
+
+   ```
+   gh release edit vX.Y.Z --notes "$(cat notes.md)"
+   ```
+
+9. **Submit to stores.** Use the freshly regenerated `dist/store/*.md` files to
+   fill out each store's submission form, and upload the matching zip from the
+   GitHub release assets.
+
 ## Workflow
 
 1. **Check clean state first:** Run `jj status` before starting a new unit of
