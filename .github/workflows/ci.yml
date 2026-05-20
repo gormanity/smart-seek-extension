@@ -15,7 +15,4 @@ jobs:
           node-version: lts/*
           cache: npm
       - run: npm ci
-      - run: make build
-      - run: make typecheck
-      - run: make lint
-      - run: make test
+      - run: make check

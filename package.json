@@ -9,6 +9,7 @@
     "build:listings": "node scripts/build-listings.js",
     "typecheck": "tsc",
     "lint": "eslint src/ tests/",
+    "lint:addons": "npm run build && addons-linter dist/firefox --warnings-as-errors",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.0",
     "@types/chrome": "^0.0.300",
+    "addons-linter": "^10.5.0",
     "esbuild": "^0.25.0",
     "eslint": "^9.39.3",
     "jsdom": "^26.0.0",
