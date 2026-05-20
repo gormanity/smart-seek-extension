@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeAll, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterEach, afterAll } from 'vitest';
 
 // ── Chrome stub ────────────────────────────────────────────────────────────
 // Must be set on globalThis before the module is imported so the content
@@ -13,6 +13,15 @@ type OnChangedCb = (
 let onChangedCallback: OnChangedCb = () => {};
 
 const chromeMock = {
+  runtime: {
+    lastError: undefined,
+    onMessage: {
+      addListener: vi.fn(),
+    },
+    sendMessage: vi.fn((_message, callback?: () => void) => {
+      callback?.();
+    }),
+  },
   storage: {
     sync: {
       get: vi.fn().mockResolvedValue({
@@ -23,6 +32,7 @@ const chromeMock = {
     },
     onChanged: {
       addListener: vi.fn((cb: OnChangedCb) => { onChangedCallback = cb; }),
+      removeListener: vi.fn(),
     },
   },
 };
@@ -34,9 +44,16 @@ const chromeMock = {
 // Importing it multiple times would stack listeners, so we do it once per file.
 
 beforeAll(async () => {
+  vi.useFakeTimers();
   await import('../src/content/seek-controller.js');
+  vi.advanceTimersByTime(500);
   // Flush the storage.get().then() microtask so settings are applied.
   await Promise.resolve();
+  vi.useRealTimers();
+});
+
+afterAll(() => {
+  vi.useRealTimers();
 });
 
 // ── Helpers ────────────────────────────────────────────────────────────────

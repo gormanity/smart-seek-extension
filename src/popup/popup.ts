@@ -7,6 +7,12 @@
  */
 
 import { DEFAULT_SETTINGS } from '../content/seek-logic.js';
+import {
+  DUPLICATE_STATUS_CHANGED_MESSAGE,
+  DUPLICATE_STATUS_REQUEST_MESSAGE,
+  type DuplicateStatusResponse,
+  type DuplicateStatusChangedMessage,
+} from '../runtime-messages.js';
 
 const STEP = 0.5;
 const MIN  = 0.5;
@@ -26,6 +32,59 @@ const settings: Settings = await storage.get(DEFAULT_SETTINGS);
 const amountEl   = document.getElementById('amount-value') as HTMLSpanElement;
 const decreaseEl = document.getElementById('decrease') as HTMLButtonElement;
 const increaseEl = document.getElementById('increase') as HTMLButtonElement;
+const devBadgeEl = document.getElementById('dev-badge') as HTMLSpanElement | null;
+const duplicateBannerEl = document.getElementById('duplicate-banner') as HTMLDivElement | null;
+
+if (__DEV__ && devBadgeEl) {
+  devBadgeEl.hidden = false;
+}
+
+function setDuplicateBannerVisible(visible: boolean): void {
+  if (duplicateBannerEl) {
+    duplicateBannerEl.hidden = !visible;
+  }
+}
+
+function refreshDuplicateStatus(): void {
+  if (__DEV__) {
+    setDuplicateBannerVisible(false);
+    return;
+  }
+
+  try {
+    chrome.runtime.sendMessage(
+      { type: DUPLICATE_STATUS_REQUEST_MESSAGE },
+      (response?: DuplicateStatusResponse) => {
+        try {
+          if (chrome.runtime.lastError) return;
+        } catch {
+          return;
+        }
+
+        setDuplicateBannerVisible(
+          response?.ok === true && response.data.duplicateDetected === true,
+        );
+      },
+    );
+  } catch {
+    setDuplicateBannerVisible(false);
+  }
+}
+
+function listenForDuplicateStatus(): void {
+  try {
+    chrome.runtime.onMessage.addListener((message: DuplicateStatusChangedMessage) => {
+      if (message.type === DUPLICATE_STATUS_CHANGED_MESSAGE) {
+        refreshDuplicateStatus();
+      }
+    });
+  } catch {
+    // The popup is short-lived; missing live updates are non-critical.
+  }
+}
+
+refreshDuplicateStatus();
+listenForDuplicateStatus();
 
 amountEl.textContent = String(settings.seekAmount);
 (document.getElementById('back-key') as HTMLSpanElement).textContent    = settings.backKey;

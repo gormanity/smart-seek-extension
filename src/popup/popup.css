@@ -34,6 +34,20 @@ body {
   font-weight: 700;
 }
 
+.dev-badge {
+  margin-left: auto;
+  border: 1px solid #7a4f00;
+  border-radius: 4px;
+  background: #2f220a;
+  color: #ffc857;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 3px 5px;
+  text-transform: uppercase;
+}
+
 /* ── Permission banner ───────────────────────────────────────────────────── */
 
 .permission-banner {
@@ -66,6 +80,18 @@ body {
 
 .permission-banner__btn:hover {
   background: #aa0000;
+}
+
+/* ── Duplicate install banner ────────────────────────────────────────────── */
+
+.duplicate-banner {
+  border: 1px solid #5a3a3a;
+  border-radius: 8px;
+  background: #2a1f1f;
+  color: #f0c7c7;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  padding: 9px 11px;
 }
 
 /* ── Card ────────────────────────────────────────────────────────────────── */

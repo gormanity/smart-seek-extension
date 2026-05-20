@@ -46,9 +46,8 @@ OPEN SOURCE
 
 Source code: https://github.com/gormanity/smart-seek-extension`,
 
-    versionNotes: `Initial release. Adds configurable seek controls to YouTube TV with a
-5-second default, custom key bindings, and a toolbar popup for quick
-seek-amount adjustment.`,
+    versionNotes: `Improves local development behavior when production and dev builds are
+installed side by side.`,
   },
 
   categories: {
@@ -67,6 +66,7 @@ seek-amount adjustment.`,
       "The seek amount and the `Shift+J` / `Shift+L` bindings are configurable from the extension popup or options page.",
       "Settings sync via `storage.sync` (no external service).",
       "The add-on does not use remote code, external services, analytics, or tracking.",
+      "The Chrome build uses `externally_connectable` only for a narrow local-development coexistence signal between the production extension and the known dev-build extension ID. It does not allow websites to connect, does not add broad extension discovery, and is not used for external services.",
       "No extension-specific accounts, authentication, or test credentials are required.",
     ],
 

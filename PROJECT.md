@@ -48,6 +48,7 @@ src/
   globals.d.ts            # Firefox compat: declare const browser
 manifest.json             # MV3 manifest (all browsers); copied to dist/ at build time
 dist/                     # Build output (git-ignored); load this as the unpacked extension
+dist-dev/                 # Dev build output (git-ignored); load alongside dist/ for coexistence testing
 scripts/
   build.js                # esbuild orchestrator (4 entry points + static asset copy)
   pack.js                 # Produces smart-seek-{version}-{chrome,edge,firefox}.zip
@@ -80,6 +81,48 @@ icons/
 - **`chrome.storage.sync`** for settings. Firefox supports this API natively via
   `browser.storage.sync`; the extension uses a
   `typeof browser !== 'undefined' ? browser : chrome` shim.
+- **Dev/prod coexistence uses runtime arbitration.** Chrome dev and prod builds
+  have distinct fixed extension IDs. The dev build announces itself to known
+  prod IDs via `chrome.runtime.sendMessage`; prod accepts only the known dev ID,
+  marks itself duplicate-disabled, updates the popup/icon, and keeps its content
+  runtime suspended. Prod also probes dev when status is requested so the popup
+  and badge do not depend on a YouTube TV tab being open. The page-local
+  heartbeat remains the content-runtime guard on YouTube TV pages, where prod
+  starts after a short grace window if no dev heartbeat is present, suspends if
+  dev appears later, and resumes after the heartbeat becomes stale.
+
+### Dev/Prod Coexistence Details
+
+The coexistence mechanism is deliberately local and permission-light:
+
+- No `management` permission is used.
+- No extension IDs are inferred from browser APIs.
+- The only cross-extension surface is `externally_connectable`, restricted to
+  the expected counterpart IDs.
+- The dev build can be loaded next to either a local prod build or the Chrome
+  Web Store prod build.
+
+Chrome IDs:
+
+| Build      | ID                                 | Purpose                       |
+| ---------- | ---------------------------------- | ----------------------------- |
+| Local prod | `gakejpcpkepgdgllnppopcglacnongao` | `dist/chrome` local testing   |
+| Store prod | `agfmeelnmijibhmffkbhebpgmjbhddkc` | Chrome Web Store production   |
+| Local dev  | `nmbehanjefalgbpkichpmdfofmjllgfi` | `dist-dev/chrome` development |
+
+Timing:
+
+| Setting                    | Value    | Purpose                                     |
+| -------------------------- | -------- | ------------------------------------------- |
+| Prod content startup grace | `500ms`  | Let dev announce before prod starts on-page |
+| Dev heartbeat interval     | `1000ms` | Keep page-local and external presence fresh |
+| Dev stale timeout          | `3500ms` | Let prod resume after dev disappears        |
+
+When prod is duplicate-disabled, the active content runtime is explicitly
+stopped. Teardown removes the key handler, storage change listener, OSD timers,
+and OSD DOM owned by the extension. The background state also switches the
+extension action to the grayed OFF icon and exposes the disabled state to the
+popup.
 
 ## Development
 
@@ -104,6 +147,7 @@ npm test
 
 ```bash
 make build   # required first — populates dist/
+npm run build:dev   # populates dist-dev/ for dev/prod coexistence testing
 ```
 
 **Chrome:**
@@ -111,6 +155,15 @@ make build   # required first — populates dist/
 1. Navigate to `chrome://extensions`
 2. Enable "Developer mode"
 3. Click "Load unpacked" → select the `dist/` folder
+
+For local dev/prod coexistence testing, load both folders:
+
+- Prod: `dist/chrome`
+- Dev: `dist-dev/chrome`
+
+If Chrome shows both installs with the same ID, remove both extension cards and
+load those exact folders again. Loading `dist/chrome` twice creates an ID
+collision and Chrome will disable one of them.
 
 **Edge:**
 

@@ -11,8 +11,14 @@ function setupPopup(
   seekAmount: number,
   backKey = 'Shift+J',
   forwardKey = 'Shift+L',
-  opts: { firefox?: boolean; hasAccess?: boolean; grantOnRequest?: boolean } = {},
+  opts: {
+    duplicateDetected?: boolean;
+    firefox?: boolean;
+    hasAccess?: boolean;
+    grantOnRequest?: boolean;
+  } = {},
 ) {
+  const duplicateDetected = opts.duplicateDetected ?? false;
   const firefox        = opts.firefox        ?? false;
   const hasAccess      = opts.hasAccess      ?? true;
   const grantOnRequest = opts.grantOnRequest ?? true;
@@ -20,9 +26,11 @@ function setupPopup(
   document.body.innerHTML = `
     <div id="permission-banner" hidden></div>
     <button id="grant-permission"></button>
+    <div id="duplicate-banner" hidden></div>
     <span id="amount-value"></span>
     <button id="decrease"></button>
     <button id="increase"></button>
+    <span id="dev-badge" hidden>Dev</span>
     <span id="back-key"></span>
     <span id="forward-key"></span>
     <button id="open-settings"></button>
@@ -32,6 +40,13 @@ function setupPopup(
   const mockOpenOptionsPage = vi.fn();
   const mockContains        = vi.fn().mockResolvedValue(hasAccess);
   const mockRequest         = vi.fn().mockResolvedValue(grantOnRequest);
+  const mockSendMessage     = vi.fn((_message, callback?: (response: unknown) => void) => {
+    callback?.({
+      ok: true,
+      data: { duplicateDetected },
+    });
+  });
+  const mockOnMessageAddListener = vi.fn();
 
   const api = {
     storage: {
@@ -40,7 +55,12 @@ function setupPopup(
         set: mockSet,
       },
     },
-    runtime:     { openOptionsPage: mockOpenOptionsPage },
+    runtime: {
+      lastError: undefined,
+      onMessage: { addListener: mockOnMessageAddListener },
+      openOptionsPage: mockOpenOptionsPage,
+      sendMessage: mockSendMessage,
+    },
     permissions: { contains: mockContains, request: mockRequest },
   };
 
@@ -52,7 +72,14 @@ function setupPopup(
     delete g.browser;
   }
 
-  return { mockSet, mockOpenOptionsPage, mockContains, mockRequest };
+  return {
+    mockContains,
+    mockOnMessageAddListener,
+    mockOpenOptionsPage,
+    mockRequest,
+    mockSendMessage,
+    mockSet,
+  };
 }
 
 const get = (id: string) => document.getElementById(id)!;
@@ -89,6 +116,44 @@ describe('popup', () => {
 
     it('increase button is enabled when below the maximum', () => {
       expect(btn('increase').disabled).toBe(false);
+    });
+
+    it('keeps the dev badge hidden in production builds', () => {
+      expect((get('dev-badge') as HTMLSpanElement).hidden).toBe(true);
+    });
+
+    it('keeps the duplicate banner hidden when production is active', () => {
+      expect((get('duplicate-banner') as HTMLDivElement).hidden).toBe(true);
+    });
+  });
+
+  describe('duplicate dev build status', () => {
+    afterEach(() => { document.body.innerHTML = ''; });
+
+    it('shows the duplicate banner when production is disabled by dev', async () => {
+      vi.resetModules();
+      setupPopup(5, 'Shift+J', 'Shift+L', { duplicateDetected: true });
+      await import('../src/popup/popup.js');
+
+      expect((get('duplicate-banner') as HTMLDivElement).hidden).toBe(false);
+    });
+
+    it('refreshes duplicate status when the background reports a change', async () => {
+      vi.resetModules();
+      const { mockOnMessageAddListener, mockSendMessage } = setupPopup(5);
+      await import('../src/popup/popup.js');
+      expect((get('duplicate-banner') as HTMLDivElement).hidden).toBe(true);
+
+      mockSendMessage.mockImplementation((_message, callback?: (response: unknown) => void) => {
+        callback?.({
+          ok: true,
+          data: { duplicateDetected: true },
+        });
+      });
+      const listener = mockOnMessageAddListener.mock.calls[0][0] as (message: { type: string }) => void;
+      listener({ type: 'smart-seek:duplicate-status-changed' });
+
+      expect((get('duplicate-banner') as HTMLDivElement).hidden).toBe(false);
     });
   });
 

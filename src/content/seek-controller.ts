@@ -5,7 +5,12 @@
  * for use as a content script — no more manual code duplication.
  */
 
+import { coordinateRuntime } from './runtime-coordinator.js';
 import { DEFAULT_SETTINGS, matchesKey, applySeek, formatSeekLabel } from './seek-logic.js';
+import {
+  RUNTIME_STATE_MESSAGE,
+  isContentDuplicateStatusRequestMessage,
+} from '../runtime-messages.js';
 
 if (__DEV__) console.debug('[Smart Seek] content script loaded');
 
@@ -48,6 +53,12 @@ function createOsdEl(): HTMLDivElement {
   return el;
 }
 
+function removeOsd(): void {
+  osdEl?.remove();
+  osdEl = null;
+  osdLabel = null;
+}
+
 function showOsd(direction: 'forward' | 'back', seconds: number): void {
   if (!osdEl) {
     osdEl    = createOsdEl();
@@ -75,12 +86,8 @@ const storageSync = chromeOrBrowser.storage.sync;
 type Settings = typeof DEFAULT_SETTINGS;
 const settings: Settings = { ...DEFAULT_SETTINGS };
 
-void storageSync.get(DEFAULT_SETTINGS).then((stored) => {
-  Object.assign(settings, stored);
-});
-
 // ── Key handler ───────────────────────────────────────────────────────────
-document.addEventListener('keydown', (event) => {
+function onKeydown(event: KeyboardEvent): void {
   // Ignore keypresses inside text inputs.
   const el = document.activeElement;
   if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || (el as HTMLElement).isContentEditable)) {
@@ -106,14 +113,90 @@ document.addEventListener('keydown', (event) => {
   if (__DEV__) console.debug(`[Smart Seek] seek ${direction} ${settings.seekAmount}s`);
   applySeek(video, isForward ? settings.seekAmount : -settings.seekAmount);
   showOsd(direction, settings.seekAmount);
-}, /* capture */ true);
+}
 
 // ── Live settings via storage changes ────────────────────────────────────
-chromeOrBrowser.storage.onChanged.addListener((changes, area) => {
+function onStorageChanged(
+  changes: Record<string, chrome.storage.StorageChange>,
+  area: string,
+): void {
   if (area !== 'sync') return;
   for (const key in changes) {
     if (Object.prototype.hasOwnProperty.call(settings, key)) {
       (settings as Record<string, unknown>)[key] = changes[key].newValue;
     }
   }
+}
+
+let active = false;
+let disabledByDuplicate = false;
+
+function sendRuntimeState(nextDisabledByDuplicate: boolean): void {
+  if (__DEV__) return;
+  disabledByDuplicate = nextDisabledByDuplicate;
+
+  try {
+    chrome.runtime.sendMessage(
+      {
+        type: RUNTIME_STATE_MESSAGE,
+        disabledByDuplicate: nextDisabledByDuplicate,
+      },
+      () => {
+        try {
+          void chrome.runtime.lastError;
+        } catch {
+          // The callback can run after the extension context is invalidated.
+        }
+      },
+    );
+  } catch {
+    // Content scripts can outlive their extension context during reloads.
+  }
+}
+
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (!isContentDuplicateStatusRequestMessage(message)) return false;
+
+  sendResponse({
+    ok: true,
+    data: { duplicateDetected: disabledByDuplicate },
+  });
+  return false;
+});
+
+function startActiveRuntime(): void {
+  if (active) return;
+  active = true;
+  void storageSync.get(DEFAULT_SETTINGS).then((stored) => {
+    Object.assign(settings, stored);
+  });
+  document.addEventListener('keydown', onKeydown, true);
+  chromeOrBrowser.storage.onChanged.addListener(onStorageChanged);
+}
+
+function stopActiveRuntime(): void {
+  if (!active) return;
+  active = false;
+  document.removeEventListener('keydown', onKeydown, true);
+  chromeOrBrowser.storage.onChanged.removeListener(onStorageChanged);
+  removeOsd();
+}
+
+coordinateRuntime({
+  onHeartbeat: () => {
+    sendRuntimeState(true);
+  },
+  onResume: () => {
+    sendRuntimeState(false);
+  },
+  onSuspend: () => {
+    sendRuntimeState(true);
+  },
+  runtime: {
+    start: () => {
+      sendRuntimeState(false);
+      startActiveRuntime();
+    },
+    stop: stopActiveRuntime,
+  },
 });

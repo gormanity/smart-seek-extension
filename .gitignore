@@ -2,6 +2,8 @@ node_modules/
 dist/
 dist-dev/
 safari-build/
+test-results/
+playwright-report/
 *.zip
 .DS_Store
 .claude/

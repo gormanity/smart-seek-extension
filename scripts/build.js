@@ -22,6 +22,14 @@
 import * as esbuild from 'esbuild';
 import { copyFileSync, cpSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 
+const CHROMIUM_PROD_KEY =
+  'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4nDuJ5bADVadx4BaHERDvyxqSd9dnScyGtoQKe42YHf7WxlfaOiHt9N4MZqsQm74ubMa/ePUG0NhKD6vYutJkUMeR3s/qj7GX0HuKHOW70ToUytW3RwuUiK25yidrf6uo0Vrip9SAtaOgy4P7J0AKOMT2wH+q5ElvJRFTHoOO5eeJkcBvBfIEn9GGPDRZ2gmFOB1LAPe29LrX/tGHYGdvzVuHwpKYoBk1/KH/O4RCgU9S4Fx/HLyzTxrbJtKzxZb7R33VhZCN0mMY/2rt8qtOhxZwuKMxaNYZXiGzwIDAQAB';
+const CHROMIUM_DEV_KEY =
+  'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy3DtTHvPRIbLHZpYamH2Dv+jJetmpfT9bk/MN02GpFQucbmfygOwW/VK332Gybdj8zFn0cApwztnPX0wMySC/Caoo+s8+X3P6lVQ2RGdBzn0eggl1CmihxK5XNd/bhZ/iagORNkwDF6reYxTghpXOomHsPtOjdpcF4lrLSKvplMa//e/h6/uL5+pd8k4VLgZn8wdjRqDvGIbje4m0jfqpPf9Wc8DhyDoKidMyKa1vpsYQGZDNgaln3/TJthlS9HH0u++zbdPaVq0ECxtzLM/3msqJZh2y73TA5GNR816RMc/yPrvnv4EFoQHwDlDXmmAs5jD7mYB5YRW56Lc5GDvrwIDAQAB';
+const CHROMIUM_LOCAL_PROD_EXTENSION_ID = 'gakejpcpkepgdgllnppopcglacnongao';
+const CHROMIUM_STORE_PROD_EXTENSION_ID = 'agfmeelnmijibhmffkbhebpgmjbhddkc';
+const CHROMIUM_DEV_EXTENSION_ID = 'nmbehanjefalgbpkichpmdfofmjllgfi';
+
 const isDev = process.argv.includes('--dev');
 const baseDir = isDev ? 'dist-dev' : 'dist';
 
@@ -97,6 +105,14 @@ for (const browser of browsers) {
 
   const manifest = structuredClone(baseManifest);
   browser.patchManifest(manifest);
+  if (browser.name === 'chrome') {
+    manifest.key = isDev ? CHROMIUM_DEV_KEY : CHROMIUM_PROD_KEY;
+    manifest.externally_connectable = {
+      ids: isDev
+        ? [CHROMIUM_LOCAL_PROD_EXTENSION_ID, CHROMIUM_STORE_PROD_EXTENSION_ID]
+        : [CHROMIUM_DEV_EXTENSION_ID],
+    };
+  }
   if (isDev) {
     manifest.name = `${manifest.name} (dev)`;
     if (manifest.browser_specific_settings?.gecko?.id) {

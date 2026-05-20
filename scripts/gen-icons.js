@@ -3,11 +3,15 @@
  *
  * Usage: npm run gen-icons
  *
- * Outputs:
+ * Outputs normal and off-state icons:
  *   icons/icon-16.png
  *   icons/icon-48.png
  *   icons/icon-128.png
  *   icons/icon-300.png  (Edge Add-on store)
+ *   icons/icon-off-16.png
+ *   icons/icon-off-48.png
+ *   icons/icon-off-128.png
+ *   icons/icon-off-300.png
  */
 
 import { Resvg } from '@resvg/resvg-js';
@@ -16,11 +20,18 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const svg  = readFileSync(join(root, 'icons/icon.svg'), 'utf8');
+const iconSources = [
+  { input: 'icon.svg', output: 'icon' },
+  { input: 'icon-off.svg', output: 'icon-off' },
+];
 
-for (const size of [16, 48, 128, 300]) {
-  const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: size } });
-  const png   = resvg.render().asPng();
-  writeFileSync(join(root, `icons/icon-${size}.png`), png);
-  console.log(`  icons/icon-${size}.png`);
+for (const { input, output } of iconSources) {
+  const svg = readFileSync(join(root, `icons/${input}`), 'utf8');
+
+  for (const size of [16, 48, 128, 300]) {
+    const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: size } });
+    const png   = resvg.render().asPng();
+    writeFileSync(join(root, `icons/${output}-${size}.png`), png);
+    console.log(`  icons/${output}-${size}.png`);
+  }
 }
