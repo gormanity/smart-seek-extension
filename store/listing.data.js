@@ -96,6 +96,20 @@ installed side by side.`,
   },
 
   edge: {
+    singlePurpose:
+      "Adds configurable keyboard seek controls to YouTube TV so users can seek forward and backward by a chosen number of seconds with custom key bindings.",
+
+    storageJustification:
+      "Stores the user's seek amount and key binding preferences using the browser's sync storage so settings persist across sessions and sync across devices.",
+
+    hostPermissionJustification:
+      "Required only for `*://tv.youtube.com/*` so the extension can inject its content script on YouTube TV pages, listen for the configured seek hotkeys, and control the active video player. The extension does not request access to any other site.",
+
+    usesRemoteCode: "No",
+
+    remoteCodeJustification:
+      "This extension does not use remote code. All JavaScript, CSS, HTML, and image assets are bundled into the extension package at build time and shipped inside the .zip submitted to Microsoft Edge Add-ons.",
+
     // Edge Add-ons constraints: max 7 terms, 30 chars per term, 21 words total.
     searchTerms: [
       "YouTube TV seek",

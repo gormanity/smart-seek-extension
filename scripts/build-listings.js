@@ -180,6 +180,38 @@ ${l.meta.homepageUrl}
 
 ${l.meta.supportUrl}
 
+## Privacy
+
+### Single purpose description
+
+${fence(l.edge.singlePurpose)}
+
+_(${l.edge.singlePurpose.length} chars)_
+
+### Permission justification
+
+**storage justification**
+
+${fence(l.edge.storageJustification)}
+
+_(${l.edge.storageJustification.length} chars)_
+
+**Host permission justification**
+
+${fence(l.edge.hostPermissionJustification)}
+
+_(${l.edge.hostPermissionJustification.length} chars)_
+
+### Are you using remote code?
+
+${l.edge.usesRemoteCode}
+
+### Remote code justification
+
+${fence(l.edge.remoteCodeJustification)}
+
+_(${l.edge.remoteCodeJustification.length} chars)_
+
 ## Store Listing
 
 ### 1. Description
