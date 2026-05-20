@@ -12,7 +12,7 @@
  */
 
 import { execSync } from 'child_process';
-import { existsSync, mkdirSync, readFileSync, rmSync } from 'fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 const root = new URL('..', import.meta.url).pathname;
@@ -31,5 +31,15 @@ function zip(name, sourceDir) {
 }
 
 zip(`smart-seek-${version}-chrome.zip`,  join(dist, 'chrome'));
-zip(`smart-seek-${version}-edge.zip`,    join(dist, 'chrome'));
+
+const edgeDir = join(dist, 'edge');
+if (existsSync(edgeDir)) rmSync(edgeDir, { recursive: true });
+cpSync(join(dist, 'chrome'), edgeDir, { recursive: true });
+const edgeManifestPath = join(edgeDir, 'manifest.json');
+const edgeManifest = JSON.parse(readFileSync(edgeManifestPath, 'utf8'));
+delete edgeManifest.key;
+delete edgeManifest.externally_connectable;
+writeFileSync(edgeManifestPath, JSON.stringify(edgeManifest, null, 2) + '\n');
+zip(`smart-seek-${version}-edge.zip`, edgeDir);
+
 zip(`smart-seek-${version}-firefox.zip`, join(dist, 'firefox'));
