@@ -19,7 +19,7 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npm run build
+      - run: node scripts/build.js --store
       - run: node scripts/pack.js
 
       - name: Ensure release exists
