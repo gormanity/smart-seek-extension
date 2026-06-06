@@ -120,6 +120,10 @@ proceed until the user explicitly approves.
    fill out each store's submission form, and upload the matching zip from the
    GitHub release assets.
 
+10. **Return the release link.** End the procedure by giving the user the direct
+    GitHub release URL. Use `gh release view vX.Y.Z --json url -q .url` if
+    needed to fetch the canonical link.
+
 ## Workflow
 
 1. **Check clean state first:** Run `jj status` before starting a new unit of
